@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(GameEngine2D)
-
+set(SFML_STATIC_LIBRARIES TRUE)
 set(CMAKE_CXX_STANDARD 20)
-
+find_package(SFML 2.5 COMPONENTS system window graphics audio)
 add_executable(GameEngine2D main.cpp GESource/Math/FVec2.h)
+target_link_libraries(GameEngine2D sfml-system sfml-window sfml-graphics sfml-audio -static)
