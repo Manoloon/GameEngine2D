@@ -6,7 +6,7 @@
 #define GAMEENGINE2D_CTRANSFORM_H
 
 
-class CTransform
+struct CTransform
 {
 
 };

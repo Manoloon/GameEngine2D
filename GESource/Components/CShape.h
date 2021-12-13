@@ -4,11 +4,13 @@
 
 #ifndef GAMEENGINE2D_CSHAPE_H
 #define GAMEENGINE2D_CSHAPE_H
+#include <SFML/Graphics.hpp>
 
-
-class CShape
+struct CShape
 {
-
+public:
+    sf::CircleShape shape;
+    CShape(){}
 };
 
 
