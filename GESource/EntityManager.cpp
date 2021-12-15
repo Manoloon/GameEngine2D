@@ -4,17 +4,22 @@
 
 #include "EntityManager.h"
 
+EntityManager::EntityManager()
+{
+
+}
+
 std::shared_ptr<Entity> EntityManager::addEntity(const std::string &tag)
 {
-    // create a new entity obj
-    auto newEntity = std::make_shared<Entity>(m_totalEntities++,tag);
+    // We declare it this way because Entity have a private constructor.
+    auto newEntity = std::shared_ptr<Entity>(new Entity(m_totalEntities++,tag));
     // store it in the queue for beeing store on the next frame.
     m_toAdd.push_back(newEntity);
     // return the entity obj
     return newEntity;
 }
 
-EntityManager::EntityManager()
+void EntityManager::Update()
 {
     for(auto e:m_toAdd)
     {
@@ -34,3 +39,4 @@ EntityManager::EntityManager()
     // end of frame -> clear the vector.
     m_toAdd.clear();
 }
+

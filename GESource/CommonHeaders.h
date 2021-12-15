@@ -1,10 +1,10 @@
 //
 // Created by Manoloon on 13/12/2021.
 //
-
-#ifndef GAMEENGINE2D_COMMONHEADERS_H
-#define GAMEENGINE2D_COMMONHEADERS_H
 #include <vector>
 #include <string>
+#include "Components/CShape.h"
+#include "Components/CTransform.h"
+#include "Systems/SMovement.h"
+#include "Systems/SRender.h"
 
-#endif //GAMEENGINE2D_COMMONHEADERS_H

@@ -26,7 +26,6 @@ public:
     std::shared_ptr<Entity> addEntity(const std::string& tag);
     EntityVec& GetEntity();
     EntityVec& GetEntity(const std::string& tag);
-
 };
 
 
