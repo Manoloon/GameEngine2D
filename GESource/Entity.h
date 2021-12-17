@@ -6,6 +6,10 @@
 #define GAMEENGINE2D_ENTITY_H
 #include <cstddef>
 #include <string>
+#include <memory>
+#include "Components/CTransform.h"
+#include "Components/CShape.h"
+#include "Components/CCollision.h"
 
 class Entity
 {
@@ -14,6 +18,10 @@ class Entity
     bool m_alive =true;
 
     // crear componentes...
+    std::shared_ptr<CShape>     cShape;
+    std::shared_ptr<CTransform> cTransform;
+    std::shared_ptr<CCollision> cCollision;
+
     //we declare EntityManager our friend, ergo he is the only one who can
     // create an instance of this class.
     friend class EntityManager;
