@@ -3,8 +3,6 @@
 //
 #include <vector>
 #include <string>
-#include "Components/CShape.h"
-#include "Components/CTransform.h"
-#include "Systems/SMovement.h"
-#include "Systems/SRender.h"
+#include "Components.h"
+#include "Systems.h"
 

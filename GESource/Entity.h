@@ -9,7 +9,7 @@
 #include <memory>
 #include "Components/CTransform.h"
 #include "Components/CShape.h"
-#include "Components/CCollision.h"
+#include "CommonHeaders.h"
 
 class Entity
 {
