@@ -1,27 +1,61 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
+abstract class Game
+abstract class EntityManager
+abstract class Entity
+abstract class Components
+abstract class Systems
 
-List <|-- AbstractList
-Collection <|-- AbstractCollection
+abstract CTransform
+abstract CCollision
+abstract CScore
+abstract CInput
 
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+class Game {
+m_window    : sf::RenderWindow
+m_entities  : EntityManager
+m_player    : Entity
+m_paused    : bool
+m_running   : bool
+init()      : void
+update()    : void
+// Systems()
+sMovement()     : void
+sUserInput()    : void
+sRender()       : void
+sEnemySpawner() : void
+sCollision()    : void
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+class EntityManager
+{
+m_entities: vector<Entity>
+m_entityMap: map<string,Entity>
+m_toAdd: vector<Entity>
+init(): void
+update(): void
+addEntity(args): sp<Entity>
+getEntities(): vector<sp<Entity>>&
+getEntities(s): vector<sp<Entity>>&
+}
+
+class Entity
+{
+m_tag       : string
+m_active    : bool
+m_id        : size_t
+//Components
+cTransform: CTransform
+cShape:    CShape
+cCollision: CCollision
+cInput:     CInput
+cScore:     CScore
+cLifespan:  CLifespan
+destroy():void
+isActive():bool
+tag():string &
+id(): size_t
 }
 
 @enduml
