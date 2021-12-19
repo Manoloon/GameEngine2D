@@ -41,7 +41,7 @@ void EntityManager::removeEntities(EntityVec &vec)
 // y luego a la locacion correspondiente in update()
 }
 
-const EntityVec &EntityManager::GetEntities()
+const EntityVec &EntityManager::getEntities()
 {
     return m_entities;
 }

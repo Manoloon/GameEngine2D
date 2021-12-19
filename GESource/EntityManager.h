@@ -25,7 +25,7 @@ public:
     EntityManager();
     void Update();
     ptr<Entity> addEntity(const std::string& tag);
-    const EntityVec& GetEntities();
+    const EntityVec& getEntities();
     const EntityVec& GetEntities(const std::string& tag);
 };
 

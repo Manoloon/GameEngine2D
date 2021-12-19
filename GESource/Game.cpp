@@ -78,6 +78,70 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
 {
     //TODO : spawn small enemies at the location of the input enemy e
     // spawn a number of small enemies equal to the vertices of the original enemy
-    // set each small enemy to the same color as the original, half the size
-    // the small enemies are worth double of the original score.
+    int vertices = entity->cShape->shape.getPointCount();
+    for(int i=0;i<vertices;i++)
+    {
+        auto smallEnemy = m_entities.addEntity("small");
+        // the small enemies are worth double of the original score.
+        smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
+        // set each small enemy to the same color as the original, half the size
+        smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getFillColor());
+        smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getScale()/2);
+    }
+}
+
+void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
+{
+    //TODO: implement the spawning of a bullet which travels toward target
+    // bullet speed is given as a scalar speed
+    // you must set the velocity by using formula in notes.
+}
+
+void Game::spawnSpecialWeapon(ptr<Entity> entity)
+{
+    //TODO: implement a special weapon.
+}
+
+void Game::sMovement()
+{
+    // TODO : implement all entity movement
+    for(auto e : m_entities.getEntities())
+    {
+
+    }
+    Vec2 playerVelocity;
+    if(m_player->cInput->left)
+    {
+        playerVelocity.x -= m_playerConfig.S;
+    }
+    if(m_player->cInput->right)
+    {
+        playerVelocity.x += m_playerConfig.S;
+    }
+    if(m_player->cInput->up)
+    {
+        playerVelocity.y += m_playerConfig.S;
+    }
+    if(m_player->cInput->down)
+    {
+        playerVelocity.y -= m_playerConfig.S;
+    }
+    // you should read the m-player->cinput comp to determine if the player is moving
+    m_player->cTransform->pos += m_player->cTransform->velocity;
+    //this is just a sample.
+    m_player->cTransform->pos.x += m_player->cTransform->velocity.x;
+    m_player->cTransform->pos.y += m_player->cTransform->velocity.y;
+}
+
+void Game::sLifespan()
+{
+    //TODO : implement all lifespan funct.
+    for(auto e : m_entities.getEntities())
+    {
+        if(!e->cLifespan){continue;}
+    }
+    // if entity has no lifespan comp , skip.
+    // if entity has > 0 current lifespan , substract 1
+    // scale its alpha channel properly
+    //  if its has lifespan and its time is up - destroy entity.
 }

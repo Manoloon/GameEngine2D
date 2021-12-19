@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <string>
 #include "CommonHeaders.h"
+#include "Components.h"
 
 class Entity
 {
