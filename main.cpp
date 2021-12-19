@@ -1,8 +1,8 @@
-#include <iostream>
-#include "/GESource/GameEngine.h"
+#include <SFML/Graphics.hpp>
+#include "GESource/Game.h"
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    Game g("config.txt");
+    g.run();
 }

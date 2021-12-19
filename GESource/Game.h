@@ -4,6 +4,7 @@
 
 #ifndef GAMEENGINE2D_GAME_H
 #define GAMEENGINE2D_GAME_H
+
 #include "CommonHeaders.h"
 #include "Entity.h"
 #include "EntityManager.h"
@@ -12,7 +13,7 @@ struct PlayerConfig {int SR,CR,FR,FG,FB,OR,OG,OB,OT,V; float S;};
 struct EnemyConfig  {int SR,CR,OR,OG,OB,OT,VMIN,VMAX,L,SI; float SMIN,SMAX;};
 struct BulletConfig {int SR,CR,FR,FG,FB,OR,OG,OB,OT,V,L; float S;};
 
-class game
+class Game
 {
     sf::RenderWindow m_window;
     EntityManager   m_entities;
@@ -47,7 +48,7 @@ class game
     void spawnSpecialWeapon(ptr<Entity> entity);
 
 public:
-    game(const std::string & config);
+    explicit Game(const std::string & config);
     void run();
 };
 
