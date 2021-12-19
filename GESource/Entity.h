@@ -6,30 +6,33 @@
 #define GAMEENGINE2D_ENTITY_H
 #include <cstddef>
 #include <string>
-#include <memory>
-#include "Components/CTransform.h"
-#include "Components/CShape.h"
 #include "CommonHeaders.h"
 
 class Entity
 {
+    //we declare EntityManager our friend, ergo he is the only one who can
+    // create an instance of this class.
+    friend class EntityManager;
+
     const size_t m_id =0;
     const std::string m_tag = "default";
     bool m_alive =true;
 
     // crear componentes...
-    std::shared_ptr<CShape>     cShape;
-    std::shared_ptr<CTransform> cTransform;
-    std::shared_ptr<CCollision> cCollision;
+    ptr<CShape>     cShape;
+    ptr<CTransform> cTransform;
+    ptr<CCollision> cCollision;
+    ptr<CInput>     cInput;
+    ptr<CScore>     cScore;
+    ptr<CLifespan>  cLifespan;
 
-    //we declare EntityManager our friend, ergo he is the only one who can
-    // create an instance of this class.
-    friend class EntityManager;
-    explicit Entity(size_t m_id,const std::string& m_tag);
-public:
     size_t GetId()const;
-    std::string GetTag()const;
-    bool GetIsAlive()const;
+    const std::string &  GetTag()const;
+    bool isActive()const;
+    void destroy();
+
+    explicit Entity(size_t m_id,const std::string& m_tag);
+
 };
 
 
