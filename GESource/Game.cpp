@@ -136,12 +136,113 @@ void Game::sMovement()
 void Game::sLifespan()
 {
     //TODO : implement all lifespan funct.
-    for(auto e : m_entities.getEntities())
-    {
-        if(!e->cLifespan){continue;}
-    }
     // if entity has no lifespan comp , skip.
     // if entity has > 0 current lifespan , substract 1
     // scale its alpha channel properly
+    for(auto e : m_entities.getEntities())
+    {
+        if(!e->cLifespan){continue;}
+        auto color = e->cShape->shape.getFillColor();
+        int alpha = 100;
+        sf::Color newColor(color.r,color.g,color.b,alpha);
+        e->cShape->shape.setFillColor(newColor);
+    }
+
     //  if its has lifespan and its time is up - destroy entity.
+}
+
+void Game::sCollision()
+{
+    //TODO: implement all proper collisions btw entities
+    // be sure to use the collision radius, NOT shape radius.
+    for(auto p: m_entities.getEntities("player"))
+    {
+        for (auto e : m_entities.getEntities("enemy"))
+        {
+
+        }
+    }
+}
+
+void Game::sEnemySpawner()
+{
+ // TODO: code which implements enemy spawning should go here.
+ // use m_currentFrame - m_lastEnemySpawnTime -> to determine
+ // how long it has been since the last enemy spawned
+}
+
+void Game::sRender()
+{
+    //TODO: change the code below to draw ALL of the entities
+    m_window.clear();
+    // all of this are only for the player.
+    // set the position of the shape based on the entity transform->pos.
+    m_player->cShape->shape.setPosition(m_player->cTransform->pos.x,m_player->cTransform->pos.y);
+    m_player->cTransform->angle += 1.0f;
+    m_player->cShape->shape.setRotation(m_player->cTransform->angle);
+    m_window.draw(m_player->cShape->shape);
+    m_window.display();
+}
+
+void Game::sUserInput()
+{
+    //TODO : handle user input here
+            // note that you should only be setting the player`s input comp var here.
+            // you should not implement the player movement logic here.
+            // the movement system will read the vars you set in here.
+    sf::Event event;
+    while(m_window.pollEvent(event))
+    {
+        if(event.type == sf::Event::Closed)
+        {
+            m_running = false;
+        }
+        if(event.type == sf::Event::KeyPressed)
+        {
+            switch(event.key.code)
+            {
+                case sf::Keyboard::W:
+                    m_player->cInput->up = true;
+                    break;
+                case sf::Keyboard::S:
+                    m_player->cInput->down = true;
+                    break;
+                case sf::Keyboard::A:
+                    m_player->cInput->left = true;
+                    break;
+                case sf::Keyboard::D:
+                    m_player->cInput->right = true;
+                    break;
+            }
+        }
+        if(event.type == sf::Event::KeyReleased)
+        {
+            switch (event.key.code)
+            {
+            case sf::Keyboard::W:
+                m_player->cInput->up = false;
+            break;
+            case sf::Keyboard::S:
+                m_player->cInput->down = false;
+            break;
+            case sf::Keyboard::A:
+                m_player->cInput->left = false;
+            break;
+            case sf::Keyboard::D:
+                m_player->cInput->right = false;
+            break;
+            }
+        }
+        if(event.type == sf::Event::MouseButtonPressed)
+        {
+            if(event.mouseButton.button==sf::Mouse::Left)
+            {
+                // TODO: spawn bullet
+            }
+            if(event.mouseButton.button == sf::Mouse::Right)
+            {
+                // TODO : special weapon.
+            }
+        }
+    }
 }

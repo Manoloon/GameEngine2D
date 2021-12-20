@@ -26,7 +26,7 @@ public:
     void Update();
     ptr<Entity> addEntity(const std::string& tag);
     const EntityVec& getEntities();
-    const EntityVec& GetEntities(const std::string& tag);
+    const EntityVec& getEntities(const std::string& tag);
 };
 
 

@@ -46,7 +46,7 @@ const EntityVec &EntityManager::getEntities()
     return m_entities;
 }
 
-const EntityVec &EntityManager::GetEntities(const std::string &tag)
+const EntityVec &EntityManager::getEntities(const std::string &tag)
 {
     // TODO : deberia devolver el vector correspondiente del Map.
     return m_entitiesMap[tag];
