@@ -4,11 +4,11 @@
 
 #include "EntityManager.h"
 
-EntityManager::EntityManager(){}
+EntityManager::EntityManager():m_totalEntities(0){}
 
 void EntityManager::Update()
 {
-    for(auto e:m_toAdd)
+    for(const auto& e:m_toAdd)
     {
         m_entities.push_back(e);
         // store it in the map of tag->entityVector
@@ -37,8 +37,14 @@ ptr<Entity> EntityManager::addEntity(const std::string &tag)
 
 void EntityManager::removeDeadEntities(EntityVec &vec)
 {
-//TODO : implementar esta funcion donde las entities son anadidas al m_entitiesToAdd vector,
-// y luego a la locacion correspondiente in update()
+//TODO : remove all dead entities from the input vector this is called by the update() func
+    for(int i=0;i< m_entities.size();++i)
+    {
+        if(!m_entities[i]->m_alive)
+        {
+            m_entities.erase(m_entities.begin() + i);
+        }
+    }
 }
 
 const EntityVec &EntityManager::getEntities()
