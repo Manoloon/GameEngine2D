@@ -19,7 +19,7 @@ class EntityManager
     EntityMap m_entitiesMap;
     EntityVec m_toAdd;
 
-    void removeEntities(EntityVec & vec);
+    void removeDeadEntities(EntityVec & vec);
 
 public:
     EntityManager();

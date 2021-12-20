@@ -15,11 +15,11 @@ void EntityManager::Update()
         m_entitiesMap[e->GetTag()].push_back(e);
     }
     // remove those who are marked for dead
-    removeEntities(m_entities);
+    removeDeadEntities(m_entities);
 
-    for(auto&[tag,entityVec] : m_entitiesMap)
+    for(auto& [tag,entityVec] : m_entitiesMap)
     {
-        removeEntities(EntityVec);
+        removeDeadEntities(entityVec);
     }
     // end of frame -> clear the vector.
     m_toAdd.clear();
@@ -35,7 +35,7 @@ ptr<Entity> EntityManager::addEntity(const std::string &tag)
     return newEntity;
 }
 
-void EntityManager::removeEntities(EntityVec &vec)
+void EntityManager::removeDeadEntities(EntityVec &vec)
 {
 //TODO : implementar esta funcion donde las entities son anadidas al m_entitiesToAdd vector,
 // y luego a la locacion correspondiente in update()

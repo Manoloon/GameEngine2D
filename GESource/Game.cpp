@@ -33,7 +33,7 @@ void Game::run()
     // some dont.
     while (m_running)
     {
-        m_entities.update();
+        m_entities.Update();
 
         if(!m_paused)
         {
@@ -85,8 +85,8 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
         // the small enemies are worth double of the original score.
         smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
         // set each small enemy to the same color as the original, half the size
-        smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getFillColor());
-        smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getScale()/2);
+       // smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getFillColor());
+        //smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getScale()/2);
     }
 }
 
