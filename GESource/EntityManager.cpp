@@ -4,7 +4,7 @@
 
 #include "EntityManager.h"
 
-EntityManager::EntityManager():m_totalEntities(0){}
+EntityManager::EntityManager(){}
 
 void EntityManager::Update()
 {

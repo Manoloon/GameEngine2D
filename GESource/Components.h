@@ -34,16 +34,14 @@ struct CCollision
 {
     float radius = 0;
 
-    CCollision(float r) : radius(r)
-    {}
+    explicit CCollision(float r) : radius(r){}
 };
 
 struct CScore
 {
     int score = 0;
 
-    CScore(int s) : score(s)
-    {}
+    explicit CScore(int s) : score(s){}
 };
 
 struct CLifespan
@@ -64,6 +62,6 @@ struct CInput
     bool down=false;
     bool shoot= false;
     bool SecShoot= false;
-    CInput(){}
+    CInput()= default;
 };
 #endif //GAMEENGINE2D_COMPONENTS_H
