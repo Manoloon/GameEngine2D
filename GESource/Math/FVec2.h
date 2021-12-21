@@ -7,24 +7,25 @@
 #include <ostream>
 struct Vec2
 {
-    float x,y;
-    Vec2();
+    float x;
+    float y;
+    Vec2()=default;
     Vec2(float xin,float yin);
-    bool operator == (const Vec2 & rval) const;
-    bool operator != (const Vec2 & rval) const;
+    bool operator == (const Vec2 & rvalue) const;
+    bool operator != (const Vec2 & rvalue) const;
     // no se usaria ni const ni & porque float es un valor minimo , mejor hacer copia de el.
-    Vec2 operator + (const Vec2 & rval) const;
-    Vec2 operator - (const Vec2 & rval) const;
-    Vec2 operator / (const float val) const;
-    Vec2 operator * (const float scale) const;
+    Vec2 operator + (const Vec2 & rvalue) const;
+    Vec2 operator - (const Vec2 & rvalue) const;
+    Vec2 operator / (float val) const;
+    Vec2 operator * (float scale) const;
 
-    void operator += (const Vec2 & rval);
-    void operator -= (const Vec2 & rval);
-    void operator *= (const float val);
-    void operator /= (const float val);
+    void operator += (const Vec2 & rvalue);
+    void operator -= (const Vec2 & rvalue);
+    void operator *= (float val);
+    void operator /= (float val);
 
     // Functions
-    float distance(const Vec2& rval) const ;
+    float dist(const Vec2& rvalue) const ;
     Vec2 scale(float scale);
     Vec2 add(float val);
 

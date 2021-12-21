@@ -160,7 +160,11 @@ void Game::sCollision()
     {
         for (auto e : m_entities.getEntities("enemy"))
         {
-
+           if(p->cTransform->pos.dist(e->cTransform->pos)<(p->cCollision->radius+e->cCollision->radius))
+            {
+                p->destroy();
+                e->destroy();
+            }
         }
     }
 }
