@@ -63,6 +63,7 @@ struct CInput
     bool right= false;
     bool down=false;
     bool shoot= false;
+    bool SecShoot= false;
     CInput(){}
 };
 #endif //GAMEENGINE2D_COMPONENTS_H

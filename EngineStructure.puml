@@ -5,13 +5,53 @@ abstract class Game
 abstract class EntityManager
 abstract class Entity
 abstract class Components
-abstract class Systems
 
 abstract CTransform
+{
+pos: Vec2
+speed: Vec2
+scale: Vec2
+angle: float
+CTransform(pos,velocity,angle)
+}
+Entity<|--Components
+Components<|--CTransform
+Components<|---CInput
+Components<|--CLifespan
+Components<|---CScore
+Components<|--CCollision
+Components<|---CShape
 abstract CCollision
+{
+radius: float
+CCollision(float r)
+}
+abstract CLifespan
+{
+remaining:int
+total:int
+CLifespan(int remain, int total)
+}
 abstract CScore
-abstract CInput
+{
+score: int
+CScore(int s)
+}
 
+abstract CInput
+{
+up:bool
+left:bool
+right:bool
+down:bool
+shoot:bool
+SecShoot:bool
+}
+abstract CShape
+{
+shape:sf::CircleShape
+CShape(radius,points,colorFill,colOutline,thickness)
+}
 class Game {
 m_window    : sf::RenderWindow
 m_entities  : EntityManager
