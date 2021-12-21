@@ -38,11 +38,12 @@ ptr<Entity> EntityManager::addEntity(const std::string &tag)
 void EntityManager::removeDeadEntities(EntityVec &vec)
 {
 //TODO : remove all dead entities from the input vector this is called by the update() func
-    for(int i=0;i< m_entities.size();++i)
+
+    for(int i=0;i< vec.size();++i)
     {
-        if(!m_entities[i]->isActive())
+        if(!vec[i]->isActive())
         {
-            m_entities.erase(m_entities.begin() + i);
+            vec.erase(vec.begin() + i);
         }
     }
 }

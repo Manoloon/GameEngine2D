@@ -39,11 +39,10 @@ void Game::run()
         {
             sMovement();
             sCollision();
-            sUserInput();
-
             // increment current frame
             m_currentFrame++;
         }
+        sUserInput();
         sRender();
     }
 }
@@ -107,30 +106,32 @@ void Game::sMovement()
     // TODO : implement all entity movement
     for(auto e : m_entities.getEntities())
     {
-
+        if(e->GetTag()=="player")
+        {
+            Vec2 playerVelocity;
+            if(m_player->cInput->left)
+            {
+                playerVelocity.x -= m_playerConfig.S;
+            }
+            if(m_player->cInput->right)
+            {
+                playerVelocity.x += m_playerConfig.S;
+            }
+            if(m_player->cInput->up)
+            {
+                playerVelocity.y += m_playerConfig.S;
+            }
+            if(m_player->cInput->down)
+            {
+                playerVelocity.y -= m_playerConfig.S;
+            }
+            // you should read the m-player->cinput comp to determine if the player is moving
+            m_player->cTransform->pos += m_player->cTransform->velocity;
+            //this is just a sample.
+            m_player->cTransform->pos.x += m_player->cTransform->velocity.x;
+            m_player->cTransform->pos.y += m_player->cTransform->velocity.y;
+        }
     }
-    Vec2 playerVelocity;
-    if(m_player->cInput->left)
-    {
-        playerVelocity.x -= m_playerConfig.S;
-    }
-    if(m_player->cInput->right)
-    {
-        playerVelocity.x += m_playerConfig.S;
-    }
-    if(m_player->cInput->up)
-    {
-        playerVelocity.y += m_playerConfig.S;
-    }
-    if(m_player->cInput->down)
-    {
-        playerVelocity.y -= m_playerConfig.S;
-    }
-    // you should read the m-player->cinput comp to determine if the player is moving
-    m_player->cTransform->pos += m_player->cTransform->velocity;
-    //this is just a sample.
-    m_player->cTransform->pos.x += m_player->cTransform->velocity.x;
-    m_player->cTransform->pos.y += m_player->cTransform->velocity.y;
 }
 
 void Game::sLifespan()
@@ -212,6 +213,13 @@ void Game::sUserInput()
                     break;
                 case sf::Keyboard::D:
                     m_player->cInput->right = true;
+                    break;
+                case sf::Keyboard::P:
+                    m_paused=!m_paused;
+                    std::cout << "PAUSED :" << m_paused << std::endl;
+                    break;
+                case sf::Keyboard::Escape:
+                    m_running=false;
                     break;
             }
         }
