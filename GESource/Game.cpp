@@ -172,6 +172,10 @@ void Game::sCollision()
 void Game::sEnemySpawner()
 {
  // TODO: code which implements enemy spawning should go here.
+ if(m_currentFrame - m_lastEnemySpawnTime <0)
+ {
+     spawnEnemy();
+ }
  // use m_currentFrame - m_lastEnemySpawnTime -> to determine
  // how long it has been since the last enemy spawned
 }
