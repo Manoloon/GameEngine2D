@@ -37,8 +37,9 @@ void Game::run()
 
         if(!m_paused)
         {
+            sEnemySpawner();
             sMovement();
-            sCollision();
+            //sCollision();
             // increment current frame
             m_currentFrame++;
         }
@@ -55,7 +56,7 @@ void Game::spawnPlayer()
     auto entity = m_entities.addEntity("player");
 
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
-    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f,200.0f),Vec2(1,1),0.0f);
+    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f,200.0f),Vec2(0,0),0.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
     entity->cShape = std::make_shared<CShape>(32.0f,8,sf::Color(10,10,10), sf::Color(255,0,0),4.0f);
     // add an input component to the player
@@ -68,7 +69,13 @@ void Game::spawnEnemy()
 {
     //TODO : make sure the enemy spawn properly with the enemyConfig
     // the enemy must be spawned completely inside bounds of windows.
-
+    auto entity = m_entities.addEntity("enemy");
+    // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
+    //TODO : definir esta data en random.
+    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f,400.0f),Vec2(1,1),1.0f);
+    // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
+    entity->cShape = std::make_shared<CShape>(16.0f,8,sf::Color(10,255,10), sf::Color(0,255,0),1.0f);
+    entity->cScore = std::make_shared<CScore>(10);
     // record when the most recent enemy was spawned
     m_lastEnemySpawnTime = m_currentFrame;
 }
@@ -83,6 +90,7 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
         auto smallEnemy = m_entities.addEntity("small");
         // the small enemies are worth double of the original score.
         smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
+        smallEnemy->cLifespan=std::make_shared<CLifespan>(10);
         // set each small enemy to the same color as the original, half the size
        // smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getFillColor());
         //smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getScale()/2);
@@ -104,32 +112,38 @@ void Game::spawnSpecialWeapon(ptr<Entity> entity)
 void Game::sMovement()
 {
     // TODO : implement all entity movement
+
     for(auto e : m_entities.getEntities())
     {
         if(e->GetTag()=="player")
         {
-            Vec2 playerVelocity;
+            Vec2 playerVelocity{};
+            // TODO: cuando implemente el config.txt -> volver a usar el playerconfig.
             if(m_player->cInput->left)
             {
-                playerVelocity.x -= m_playerConfig.S;
+                playerVelocity.x -= 1;//m_playerConfig.S;
             }
             if(m_player->cInput->right)
             {
-                playerVelocity.x += m_playerConfig.S;
+                playerVelocity.x += 1;//m_playerConfig.S;
             }
             if(m_player->cInput->up)
             {
-                playerVelocity.y += m_playerConfig.S;
+                playerVelocity.y -= 1;// m_playerConfig.S;
             }
             if(m_player->cInput->down)
             {
-                playerVelocity.y -= m_playerConfig.S;
+                playerVelocity.y += 1;//m_playerConfig.S;
             }
+            m_player->cTransform->velocity = playerVelocity;
             // you should read the m-player->cinput comp to determine if the player is moving
             m_player->cTransform->pos += m_player->cTransform->velocity;
-            //this is just a sample.
-            m_player->cTransform->pos.x += m_player->cTransform->velocity.x;
-            m_player->cTransform->pos.y += m_player->cTransform->velocity.y;
+        }
+        else
+        {
+            // TODO : esto es hasta que implementemos el config.txt
+            e->cTransform->velocity = {1,1};//{m_enemyConfig.SMAX,m_enemyConfig.SMAX};
+            e->cTransform->pos += e->cTransform->velocity;
         }
     }
 }
@@ -144,7 +158,7 @@ void Game::sLifespan()
     {
         if(!e->cLifespan){continue;}
         auto color = e->cShape->shape.getFillColor();
-        int alpha = 100;
+        sf::Uint8 alpha = 100;
         sf::Color newColor(color.r,color.g,color.b,alpha);
         e->cShape->shape.setFillColor(newColor);
     }
@@ -163,6 +177,7 @@ void Game::sCollision()
            if(p->cTransform->pos.dist(e->cTransform->pos)<(p->cCollision->radius+e->cCollision->radius))
             {
                 p->destroy();
+                SpawnSmallEnemies(e);
                 e->destroy();
             }
         }
@@ -172,24 +187,33 @@ void Game::sCollision()
 void Game::sEnemySpawner()
 {
  // TODO: code which implements enemy spawning should go here.
- if(m_currentFrame - m_lastEnemySpawnTime <0)
- {
-     spawnEnemy();
- }
- // use m_currentFrame - m_lastEnemySpawnTime -> to determine
- // how long it has been since the last enemy spawned
+    // use m_currentFrame - m_lastEnemySpawnTime -> to determine
+    // how long it has been since the last enemy spawned
+    int spawnFrequency = 200; // +(std::rand() % (1+700-100));
+    if(m_currentFrame >spawnFrequency)
+    {
+        m_currentFrame -= m_lastEnemySpawnTime;
+        std::cout << "PASE" << std::endl;
+        spawnEnemy();
+    }
+    else
+    {
+        std::cout << m_currentFrame << std::endl;
+    }
 }
 
 void Game::sRender()
 {
-    //TODO: change the code below to draw ALL of the entities
     m_window.clear();
     // all of this are only for the player.
     // set the position of the shape based on the entity transform->pos.
-    m_player->cShape->shape.setPosition(m_player->cTransform->pos.x,m_player->cTransform->pos.y);
-    m_player->cTransform->angle += 1.0f;
-    m_player->cShape->shape.setRotation(m_player->cTransform->angle);
-    m_window.draw(m_player->cShape->shape);
+    for(auto e : m_entities.getEntities())
+    {
+        e->cShape->shape.setPosition(e->cTransform->pos.x,e->cTransform->pos.y);
+        e->cTransform->angle +=1.0f;
+        e->cShape->shape.setRotation(e->cTransform->angle);
+        m_window.draw(e->cShape->shape);
+    }
     m_window.display();
 }
 
@@ -224,7 +248,7 @@ void Game::sUserInput()
                     break;
                 case sf::Keyboard::P:
                     m_paused=!m_paused;
-                    std::cout << "PAUSED :" << m_paused << std::endl;
+                    std::cout << "Game Paused :"<< m_paused << std::endl;
                     break;
                 case sf::Keyboard::Escape:
                     m_running=false;

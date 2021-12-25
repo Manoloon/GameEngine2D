@@ -49,8 +49,8 @@ struct CLifespan
     int remaining = 0;
     int total = 0;
 
-    CLifespan(int remain, int total)
-            : remaining(remain), total(total)
+    CLifespan(int total)
+            : remaining(total), total(total)
     {}
 };
 
