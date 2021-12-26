@@ -25,14 +25,35 @@ struct Vec2
     void operator /= (float val);
 
     // Functions
-    /**
+    /** Distance
      * @param rvalue = target vector
      * @return float : Distance
      */
     float dist(const Vec2& rvalue) const ;
+    /**
+     * Length of a vector
+     * @return float
+     */
     float getVectorLength() const;
+    /**
+     * Direction to move
+     * @param Target : target location to move to.
+     * @return a vector2
+     */
     Vec2 ForwardTo(const Vec2& Target) const;
+    /**
+     * Get Velocity by angle
+     * @param speed
+     * @param angle : feed the angle to calculate velocity vector using atan2f
+     * @return
+     */
     Vec2 getVelocity(float speed,float angle) const;
+    /**
+     * Get Velocity by Vector position
+     * @param speed
+     * @param targetPos : the position of the target in Vector2
+     * @return
+     */
     Vec2 getVelocity(float speed,const Vec2& targetPos) const;
 
     float getAngle(const Vec2& TargetPos)const;
