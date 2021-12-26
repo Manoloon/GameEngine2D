@@ -80,6 +80,36 @@ float Vec2::dist(const Vec2 &rvalue) const
     return (this->x - rvalue.x * rvalue.x) + (this->y - rvalue.y * rvalue.y);
 }
 
+Vec2 Vec2::ForwardTo(const Vec2& Target) const
+{
+    return {Target.x -this->x,Target.y - this->y};
+}
+
+Vec2 Vec2::normalize() const
+{
+    return {this->x / getVectorLength(), this->y / getVectorLength()};
+}
+
+float Vec2::getVectorLength() const
+{
+    return sqrtf(this->x * this->x + this->y * this->y);
+}
+
+float Vec2::getAngle(const Vec2& TargetPos) const
+{
+    return atan2f(TargetPos.y-this->y,TargetPos.x-this->x);
+}
+
+Vec2 Vec2::getVelocity(float speed,float angle) const
+{
+    return {speed *cosf(angle),speed * sinf(angle)} ;
+}
+
+Vec2 Vec2::getVelocity(float speed,const Vec2& targetPos) const
+{
+    return {speed * targetPos.normalize().x,speed * targetPos.normalize().y};
+}
+
 
 
 

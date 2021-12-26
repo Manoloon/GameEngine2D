@@ -25,7 +25,18 @@ struct Vec2
     void operator /= (float val);
 
     // Functions
+    /**
+     * @param rvalue = target vector
+     * @return float : Distance
+     */
     float dist(const Vec2& rvalue) const ;
+    float getVectorLength() const;
+    Vec2 ForwardTo(const Vec2& Target) const;
+    Vec2 getVelocity(float speed,float angle) const;
+    Vec2 getVelocity(float speed,const Vec2& targetPos) const;
+
+    float getAngle(const Vec2& TargetPos)const;
+    Vec2 normalize() const;
     Vec2 scale(float scale);
     Vec2 add(float val);
 

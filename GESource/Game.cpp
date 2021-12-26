@@ -61,6 +61,7 @@ void Game::spawnPlayer()
     entity->cShape = std::make_shared<CShape>(32.0f,8,sf::Color(10,10,10), sf::Color(255,0,0),4.0f);
     // add an input component to the player
     entity->cInput = std::make_shared<CInput>();
+    entity->cCollision = std::make_shared<CCollision>(32);
     // this goes against entityManager paradigm , but the player is a pretty heavy used class
     m_player = entity;
 }
@@ -75,6 +76,7 @@ void Game::spawnEnemy()
     entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f,400.0f),Vec2(1,1),1.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
     entity->cShape = std::make_shared<CShape>(16.0f,8,sf::Color(10,255,10), sf::Color(0,255,0),1.0f);
+    entity->cCollision=std::make_shared<CCollision>(16);
     entity->cScore = std::make_shared<CScore>(10);
     // record when the most recent enemy was spawned
     m_lastEnemySpawnTime = m_currentFrame;
@@ -87,13 +89,14 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
     int vertices = entity->cShape->shape.getPointCount();
     for(int i=0;i<vertices;i++)
     {
-        auto smallEnemy = m_entities.addEntity("small");
-        // the small enemies are worth double of the original score.
-        smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
-        smallEnemy->cLifespan=std::make_shared<CLifespan>(10);
-        // set each small enemy to the same color as the original, half the size
-       // smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getFillColor());
-        //smallEnemy->cShape = std::make_shared<CShape>(entity->cShape->shape.getScale()/2);
+       auto smallEnemy = m_entities.addEntity("small");
+       // the small enemies are worth double of the original score.
+       smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
+       smallEnemy->cLifespan=std::make_shared<CLifespan>(10);
+       // set each small enemy to the same color as the original, half the size
+       smallEnemy->cShape = std::make_shared<CShape>(8,vertices,entity->cShape->shape.getFillColor(),
+                                                     entity->cShape->shape.getOutlineColor(),entity->cShape->shape.getOutlineThickness());
+       smallEnemy->cCollision = std::make_shared<CCollision>(8);
     }
 }
 
@@ -102,6 +105,13 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
     //TODO: implement the spawning of a bullet which travels toward target
     // bullet speed is given as a scalar speed
     // you must set the velocity by using formula in notes.
+    auto bullet = m_entities.addEntity("bullet");
+    bullet->cShape = std::make_shared<CShape>(8,3,sf::Color::Blue,sf::Color::Cyan,1);
+    bullet->cLifespan=std::make_shared<CLifespan>(10);
+    float newAngle = entity->cTransform->pos.getAngle(mousePos);
+    bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(3,newAngle),newAngle);
+    std::cout << "b X" << bullet->cTransform->pos.x << " " << "b Y" << bullet->cTransform->pos.y << std::endl;
+    bullet->cCollision = std::make_shared<CCollision>(8);
 }
 
 void Game::spawnSpecialWeapon(ptr<Entity> entity)
@@ -142,7 +152,6 @@ void Game::sMovement()
         else
         {
             // TODO : esto es hasta que implementemos el config.txt
-            e->cTransform->velocity = {1,1};//{m_enemyConfig.SMAX,m_enemyConfig.SMAX};
             e->cTransform->pos += e->cTransform->velocity;
         }
     }
@@ -193,12 +202,12 @@ void Game::sEnemySpawner()
     if(m_currentFrame >spawnFrequency)
     {
         m_currentFrame -= m_lastEnemySpawnTime;
-        std::cout << "PASE" << std::endl;
+        std::cout << "SPAWN" << std::endl;
         spawnEnemy();
     }
     else
     {
-        std::cout << m_currentFrame << std::endl;
+       // std::cout << m_currentFrame << std::endl;
     }
 }
 
@@ -278,6 +287,8 @@ void Game::sUserInput()
             if(event.mouseButton.button==sf::Mouse::Left)
             {
                 // TODO: spawn bullet
+                sf::Vector2i position = sf::Mouse::getPosition();
+                spawnBullet(m_player,{static_cast<float>(position.x),static_cast<float>(position.y)});
             }
             if(event.mouseButton.button == sf::Mouse::Right)
             {
