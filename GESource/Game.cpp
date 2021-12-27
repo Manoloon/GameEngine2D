@@ -39,7 +39,7 @@ void Game::run()
         {
             sEnemySpawner();
             sMovement();
-            //sCollision();
+            sCollision();
             // increment current frame
             m_currentFrame++;
         }
@@ -61,7 +61,7 @@ void Game::spawnPlayer()
     entity->cShape = std::make_shared<CShape>(32.0f,8,sf::Color(10,10,10), sf::Color(255,0,0),4.0f);
     // add an input component to the player
     entity->cInput = std::make_shared<CInput>();
-    entity->cCollision = std::make_shared<CCollision>(32);
+    entity->cCollision = std::make_shared<CCollision>(32.0f);
     // this goes against entityManager paradigm , but the player is a pretty heavy used class
     m_player = entity;
 }
@@ -108,10 +108,10 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
     auto bullet = m_entities.addEntity("bullet");
     bullet->cShape = std::make_shared<CShape>(8,3,sf::Color::Blue,sf::Color::Cyan,1);
     bullet->cLifespan=std::make_shared<CLifespan>(10);
-    float newAngle = entity->cTransform->pos.getAngle(mousePos);
+    float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
     bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(3,newAngle),newAngle);
     std::cout << "b X" << bullet->cTransform->pos.x << " " << "b Y" << bullet->cTransform->pos.y << std::endl;
-    bullet->cCollision = std::make_shared<CCollision>(8);
+    bullet->cCollision = std::make_shared<CCollision>(16);
 }
 
 void Game::spawnSpecialWeapon(ptr<Entity> entity)
@@ -183,14 +183,32 @@ void Game::sCollision()
     {
         for (auto e : m_entities.getEntities("enemy"))
         {
-           if(p->cTransform->pos.dist(e->cTransform->pos)<(p->cCollision->radius+e->cCollision->radius))
+            float dist = p->cTransform->pos.distSquare(e->cTransform->pos);
+           if(dist<(p->cCollision->radius + e->cCollision->radius))
             {
-                p->destroy();
-                SpawnSmallEnemies(e);
-                e->destroy();
+
+               // p->destroy();
+               //SpawnSmallEnemies(e);
+               e->destroy();
             }
         }
     }
+    for(auto b: m_entities.getEntities("bullet"))
+    {
+        for (auto e : m_entities.getEntities("enemy"))
+        {
+            float dist = b->cTransform->pos.dist(e->cTransform->pos);
+            if(dist<(b->cCollision->radius + e->cCollision->radius))
+            {
+
+                // p->destroy();
+                //SpawnSmallEnemies(e);
+                e->destroy();
+                b->destroy();
+            }
+        }
+    }
+    //TODO: falta check limites de la pantalla , que nadie salga de ella.
 }
 
 void Game::sEnemySpawner()
@@ -221,6 +239,10 @@ void Game::sRender()
         e->cShape->shape.setPosition(e->cTransform->pos.x,e->cTransform->pos.y);
         e->cTransform->angle +=1.0f;
         e->cShape->shape.setRotation(e->cTransform->angle);
+       // if(m_debugCollisions)
+        //{
+          //  m_window.draw(e->cCollision->shape);
+        //}
         m_window.draw(e->cShape->shape);
     }
     m_window.display();
@@ -255,12 +277,17 @@ void Game::sUserInput()
                 case sf::Keyboard::D:
                     m_player->cInput->right = true;
                     break;
+                    // Options
                 case sf::Keyboard::P:
                     m_paused=!m_paused;
                     std::cout << "Game Paused :"<< m_paused << std::endl;
                     break;
                 case sf::Keyboard::Escape:
                     m_running=false;
+                    break;
+                case sf::Keyboard::O:
+                    m_debugCollisions =!m_debugCollisions;
+                    std::cout << "Debug Collisions :"<< m_debugCollisions << std::endl;
                     break;
             }
         }

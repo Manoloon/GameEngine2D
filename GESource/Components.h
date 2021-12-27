@@ -33,8 +33,13 @@ struct CShape
 struct CCollision
 {
     float radius = 0;
-
-    explicit CCollision(float r) : radius(r){}
+    sf::CircleShape shape;
+    explicit CCollision(float r) : radius(r)
+    {
+        shape.setOutlineColor(sf::Color::Red);
+        shape.setOrigin(radius,radius);
+        shape.setOutlineThickness(2);
+    }
 };
 
 struct CScore

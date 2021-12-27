@@ -30,6 +30,7 @@ struct Vec2
      * @return float : Distance
      */
     float dist(const Vec2& rvalue) const ;
+    float distSquare(const Vec2& rvalue)const;
     /**
      * Length of a vector
      * @return float

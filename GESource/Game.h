@@ -27,6 +27,7 @@ class Game
     int             m_lastEnemySpawnTime =0;
     bool            m_paused= false;
     bool            m_running=true;
+    bool            m_debugCollisions= false;
 
     ptr<Entity> m_player;
 
