@@ -90,13 +90,14 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
     for(int i=0;i<vertices;i++)
     {
        auto smallEnemy = m_entities.addEntity("small");
-       // the small enemies are worth double of the original score.
-       smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
-       smallEnemy->cLifespan=std::make_shared<CLifespan>(10);
+       smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,entity->cTransform->velocity,entity->cTransform->angle);
        // set each small enemy to the same color as the original, half the size
        smallEnemy->cShape = std::make_shared<CShape>(8,vertices,entity->cShape->shape.getFillColor(),
-                                                     entity->cShape->shape.getOutlineColor(),entity->cShape->shape.getOutlineThickness());
+                                                      entity->cShape->shape.getOutlineColor(),entity->cShape->shape.getOutlineThickness());
        smallEnemy->cCollision = std::make_shared<CCollision>(8);
+       // the small enemies are worth double of the original score.
+       smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
+       smallEnemy->cLifespan=std::make_shared<CLifespan>(120);
     }
 }
 
@@ -187,8 +188,8 @@ void Game::sCollision()
            if(dist<(p->cCollision->radius + e->cCollision->radius))
             {
 
-               // p->destroy();
-               //SpawnSmallEnemies(e);
+               p->destroy();
+               spawnPlayer();
                e->destroy();
             }
         }
@@ -200,9 +201,7 @@ void Game::sCollision()
             float dist = b->cTransform->pos.dist(e->cTransform->pos);
             if(dist<(b->cCollision->radius + e->cCollision->radius))
             {
-
-                // p->destroy();
-                //SpawnSmallEnemies(e);
+                SpawnSmallEnemies(e);
                 e->destroy();
                 b->destroy();
             }
