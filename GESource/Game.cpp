@@ -15,9 +15,20 @@ void Game::init(const std::string &config)
     // use the premade PlayerConfig, enemyConfig and BulletConfig vars
     // std::ifstream fin(path);
     // fin >> m_playerConfig.SR >> m_playerConfig.CR >> m_playerConfig.S;
+    std::ifstream ConfigFile ("config.txt");
+    if(ConfigFile.is_open())
+    {
+        ConfigFile >> m_gameConfig.WI >> m_gameConfig.HE >> m_gameConfig.FR;
+    }
+    else
+    {
+        m_gameConfig.WI = 1280;
+        m_gameConfig.HE =720;
+        m_gameConfig.FR = 60;
+    }
 
-    m_window.create(sf::VideoMode(1280,720),"Game Engine 2D");
-    m_window.setFramerateLimit(60);
+    m_window.create(sf::VideoMode(m_gameConfig.WI,m_gameConfig.HE),"Game Engine 2D");
+    m_window.setFramerateLimit(m_gameConfig.FR);
     spawnPlayer();
 }
 
@@ -51,14 +62,13 @@ void Game::run()
 void Game::spawnPlayer()
 {
     //TODO : finish adding all props of the player with the correct values from the config.
-
     // create player
     auto entity = m_entities.addEntity("player");
 
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
-    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f,200.0f),Vec2(0,0),0.0f);
+    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(0, 0), 0.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
-    entity->cShape = std::make_shared<CShape>(32.0f,8,sf::Color(10,10,10), sf::Color(255,0,0),4.0f);
+    entity->cShape = std::make_shared<CShape>(32.0f, 8, sf::Color(10, 10, 10), sf::Color(255, 0, 0), 4.0f);
     // add an input component to the player
     entity->cInput = std::make_shared<CInput>();
     entity->cCollision = std::make_shared<CCollision>(32.0f);
@@ -187,10 +197,9 @@ void Game::sCollision()
             float dist = p->cTransform->pos.distSquare(e->cTransform->pos);
            if(dist<(p->cCollision->radius + e->cCollision->radius))
             {
-
                p->destroy();
-               spawnPlayer();
                e->destroy();
+               spawnPlayer();
             }
         }
     }
@@ -208,6 +217,17 @@ void Game::sCollision()
         }
     }
     //TODO: falta check limites de la pantalla , que nadie salga de ella.
+    for(auto e :m_entities.getEntities())
+    {
+        if(e->cTransform->pos.x < 0 ||  e->cTransform->pos.x > m_window.getSize().x)
+        {
+            e->cTransform->velocity.x *=-1;
+        }
+        else if (e->cTransform->pos.y < 0 ||  e->cTransform->pos.y > m_window.getSize().y)
+        {
+            e->cTransform->velocity.y *=-1;
+        }
+    }
 }
 
 void Game::sEnemySpawner()
@@ -219,12 +239,7 @@ void Game::sEnemySpawner()
     if(m_currentFrame >spawnFrequency)
     {
         m_currentFrame -= m_lastEnemySpawnTime;
-        std::cout << "SPAWN" << std::endl;
         spawnEnemy();
-    }
-    else
-    {
-       // std::cout << m_currentFrame << std::endl;
     }
 }
 
