@@ -8,7 +8,20 @@
 #include "CommonHeaders.h"
 #include "Entity.h"
 #include "EntityManager.h"
-struct GameConfig   {int WI,HE,FR,NS;};
+/**
+ * shape radius :           SR
+ * Collision radius :       CR
+ * speed :                  S
+ * Fill Color :             FR,FG,FB
+ * Outline Color :          OR,OG,OB
+ * Outline Thickness :      OT
+ * Shape Vertices :         V
+ * Lifespan :               L
+ *
+ * Width :                  W  Height :                 H
+ * Frame limit :            FL FullScreen:              FS
+ */
+struct GameConfig   {int W,H,FL,FS;};
 struct PlayerConfig {int SR,CR,FR,FG,FB,OR,OG,OB,OT,V; float S;};
 struct EnemyConfig  {int SR,CR,OR,OG,OB,OT,VMIN,VMAX,L,SI; float SMIN;float SMAX;};
 struct BulletConfig {int SR,CR,FR,FG,FB,OR,OG,OB,OT,V,L; float S;};

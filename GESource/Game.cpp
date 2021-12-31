@@ -13,22 +13,42 @@ void Game::init(const std::string &config)
 {
     //TODO: read the config file
     // use the premade PlayerConfig, enemyConfig and BulletConfig vars
-    // std::ifstream fin(path);
-    // fin >> m_playerConfig.SR >> m_playerConfig.CR >> m_playerConfig.S;
-    std::ifstream ConfigFile ("config.txt");
-    if(ConfigFile.is_open())
+    std::ifstream stream(config);
+    std::string first;
+    while (stream >> first)
     {
-        ConfigFile >> m_gameConfig.WI >> m_gameConfig.HE >> m_gameConfig.FR;
-    }
-    else
-    {
-        m_gameConfig.WI = 1280;
-        m_gameConfig.HE =720;
-        m_gameConfig.FR = 60;
+        if(first == "Window")
+        {
+            stream >> m_gameConfig.W >> m_gameConfig.H >> m_gameConfig.FL >> m_gameConfig.FS;
+        }
+        else if(first == "Font")
+        {
+
+        }
+        else if (first =="Player")
+        {
+            stream >> m_playerConfig.SR >> m_playerConfig.FR >> m_playerConfig.CR
+                   >> m_playerConfig.FB >> m_playerConfig.FG >> m_playerConfig.OR >> m_playerConfig.OG
+                   >> m_playerConfig.OB >> m_playerConfig.OT>> m_playerConfig.V  >> m_playerConfig.S;
+        }
+        else if (first == "Enemy")
+        {
+            stream >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.OR
+                   >> m_enemyConfig.OG >> m_enemyConfig.OB >> m_enemyConfig.OT
+                   >> m_enemyConfig.VMIN >> m_enemyConfig.VMAX >> m_enemyConfig.L
+                   >> m_enemyConfig.SI >> m_enemyConfig.SMIN >> m_enemyConfig.SMAX;
+        }
+        else if (first == "Bullet")
+        {
+            stream >> m_bulletConfig.SR >> m_bulletConfig.CR >> m_bulletConfig.FR
+                   >> m_bulletConfig.FG >> m_bulletConfig.FB >> m_bulletConfig.OR
+                   >> m_bulletConfig.OG >> m_bulletConfig.OB >> m_bulletConfig.OT
+                   >> m_bulletConfig.V >> m_bulletConfig.L >> m_bulletConfig.S;
+        }
     }
 
-    m_window.create(sf::VideoMode(m_gameConfig.WI,m_gameConfig.HE),"Game Engine 2D");
-    m_window.setFramerateLimit(m_gameConfig.FR);
+    m_window.create(sf::VideoMode(m_gameConfig.W,m_gameConfig.H),"Game Engine 2D");
+    m_window.setFramerateLimit(m_gameConfig.FL);
     spawnPlayer();
 }
 
@@ -68,10 +88,11 @@ void Game::spawnPlayer()
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
     entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(0, 0), 0.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
-    entity->cShape = std::make_shared<CShape>(32.0f, 8, sf::Color(10, 10, 10), sf::Color(255, 0, 0), 4.0f);
+    entity->cShape = std::make_shared<CShape>(m_playerConfig.SR, m_playerConfig.V, sf::Color(m_playerConfig.FR,m_playerConfig.FG,m_playerConfig.FG),
+                                              sf::Color(m_playerConfig.OG,m_playerConfig.OG,m_playerConfig.OB), m_playerConfig.OT);
     // add an input component to the player
     entity->cInput = std::make_shared<CInput>();
-    entity->cCollision = std::make_shared<CCollision>(32.0f);
+    entity->cCollision = std::make_shared<CCollision>(m_playerConfig.CR);
     // this goes against entityManager paradigm , but the player is a pretty heavy used class
     m_player = entity;
 }
@@ -80,13 +101,20 @@ void Game::spawnEnemy()
 {
     //TODO : make sure the enemy spawn properly with the enemyConfig
     // the enemy must be spawned completely inside bounds of windows.
+    //spawn location random (inside bounds and not near the player.)
+    // speed random Smin,Smax
+    // vertice random (VMin,vMAx)
+    // Color fill debe ser random.
+
     auto entity = m_entities.addEntity("enemy");
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
     //TODO : definir esta data en random.
     entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f,400.0f),Vec2(1,1),1.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
-    entity->cShape = std::make_shared<CShape>(16.0f,8,sf::Color(10,255,10), sf::Color(0,255,0),1.0f);
-    entity->cCollision=std::make_shared<CCollision>(16);
+    auto CO =  sf::Color(m_enemyConfig.OR,m_enemyConfig.OG,m_enemyConfig.OB);
+    entity->cShape = std::make_shared<CShape>(m_enemyConfig.SR,8,sf::Color(10,255,10),
+                                             CO,m_enemyConfig.OT);
+    entity->cCollision=std::make_shared<CCollision>(m_enemyConfig.CR);
     entity->cScore = std::make_shared<CScore>(10);
     // record when the most recent enemy was spawned
     m_lastEnemySpawnTime = m_currentFrame;
@@ -107,7 +135,7 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
        smallEnemy->cCollision = std::make_shared<CCollision>(8);
        // the small enemies are worth double of the original score.
        smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
-       smallEnemy->cLifespan=std::make_shared<CLifespan>(120);
+       smallEnemy->cLifespan=std::make_shared<CLifespan>(m_enemyConfig.L);
     }
 }
 
@@ -117,12 +145,14 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
     // bullet speed is given as a scalar speed
     // you must set the velocity by using formula in notes.
     auto bullet = m_entities.addEntity("bullet");
-    bullet->cShape = std::make_shared<CShape>(8,3,sf::Color::Blue,sf::Color::Cyan,1);
-    bullet->cLifespan=std::make_shared<CLifespan>(10);
+    const auto CF = sf::Color(m_bulletConfig.FR,m_bulletConfig.FG,m_bulletConfig.FB);
+    const auto CO = sf::Color(sf::Color(m_bulletConfig.OR,m_bulletConfig.OG,m_bulletConfig.OB));
+    bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR,m_bulletConfig.V,CF,CO,m_bulletConfig.OT);
+    bullet->cLifespan=std::make_shared<CLifespan>(m_bulletConfig.L);
     float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
     bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(3,newAngle),newAngle);
     std::cout << "b X" << bullet->cTransform->pos.x << " " << "b Y" << bullet->cTransform->pos.y << std::endl;
-    bullet->cCollision = std::make_shared<CCollision>(16);
+    bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
 }
 
 void Game::spawnSpecialWeapon(ptr<Entity> entity)
