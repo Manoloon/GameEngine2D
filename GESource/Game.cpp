@@ -151,7 +151,6 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
     bullet->cLifespan=std::make_shared<CLifespan>(m_bulletConfig.L);
     float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
     bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(3,newAngle),newAngle);
-    std::cout << "b X" << bullet->cTransform->pos.x << " " << "b Y" << bullet->cTransform->pos.y << std::endl;
     bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
 }
 
@@ -169,22 +168,21 @@ void Game::sMovement()
         if(e->GetTag()=="player")
         {
             Vec2 playerVelocity{};
-            // TODO: cuando implemente el config.txt -> volver a usar el playerconfig.
             if(m_player->cInput->left)
             {
-                playerVelocity.x -= 1;//m_playerConfig.S;
+                playerVelocity.x -= m_playerConfig.S;
             }
             if(m_player->cInput->right)
             {
-                playerVelocity.x += 1;//m_playerConfig.S;
+                playerVelocity.x += m_playerConfig.S;
             }
             if(m_player->cInput->up)
             {
-                playerVelocity.y -= 1;// m_playerConfig.S;
+                playerVelocity.y -= m_playerConfig.S;
             }
             if(m_player->cInput->down)
             {
-                playerVelocity.y += 1;//m_playerConfig.S;
+                playerVelocity.y += m_playerConfig.S;
             }
             m_player->cTransform->velocity = playerVelocity;
             // you should read the m-player->cinput comp to determine if the player is moving
@@ -218,7 +216,6 @@ void Game::sLifespan()
 
 void Game::sCollision()
 {
-    //TODO: implement all proper collisions btw entities
     // be sure to use the collision radius, NOT shape radius.
     for(auto p: m_entities.getEntities("player"))
     {
@@ -246,7 +243,7 @@ void Game::sCollision()
             }
         }
     }
-    //TODO: falta check limites de la pantalla , que nadie salga de ella.
+
     for(auto e :m_entities.getEntities())
     {
         if(e->cTransform->pos.x < 0 ||  e->cTransform->pos.x > m_window.getSize().x)
@@ -262,7 +259,6 @@ void Game::sCollision()
 
 void Game::sEnemySpawner()
 {
- // TODO: code which implements enemy spawning should go here.
     // use m_currentFrame - m_lastEnemySpawnTime -> to determine
     // how long it has been since the last enemy spawned
     int spawnFrequency = 200; // +(std::rand() % (1+700-100));
@@ -294,7 +290,6 @@ void Game::sRender()
 
 void Game::sUserInput()
 {
-    //TODO : handle user input here
             // note that you should only be setting the player`s input comp var here.
             // you should not implement the player movement logic here.
             // the movement system will read the vars you set in here.
@@ -357,7 +352,6 @@ void Game::sUserInput()
         {
             if(event.mouseButton.button==sf::Mouse::Left)
             {
-                // TODO: spawn bullet
                 sf::Vector2i position = sf::Mouse::getPosition();
                 spawnBullet(m_player,{static_cast<float>(position.x),static_cast<float>(position.y)});
             }
