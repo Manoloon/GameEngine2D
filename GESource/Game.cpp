@@ -11,8 +11,7 @@ Game::Game(const std::string &config)
 
 void Game::init(const std::string &config)
 {
-    //TODO: read the config file
-    // use the premade PlayerConfig, enemyConfig and BulletConfig vars
+    // TODO : falta la config de Font
     std::ifstream stream(config);
     std::string first;
     while (stream >> first)
@@ -23,30 +22,43 @@ void Game::init(const std::string &config)
         }
         else if(first == "Font")
         {
-
+            stream >> m_fontConfig.F >> m_fontConfig.S
+                   >> m_fontConfig.R >> m_fontConfig.G >> m_fontConfig.B;
         }
         else if (first =="Player")
         {
-            stream >> m_playerConfig.SR >> m_playerConfig.FR >> m_playerConfig.CR
-                   >> m_playerConfig.FB >> m_playerConfig.FG >> m_playerConfig.OR >> m_playerConfig.OG
-                   >> m_playerConfig.OB >> m_playerConfig.OT>> m_playerConfig.V  >> m_playerConfig.S;
+            stream >> m_playerConfig.SR >> m_playerConfig.CR >> m_playerConfig.S
+                   >> m_playerConfig.FR >> m_playerConfig.FG >> m_playerConfig.FB
+                   >> m_playerConfig.OR >> m_playerConfig.OG >> m_playerConfig.OB
+                   >> m_playerConfig.OT >> m_playerConfig.V;
         }
         else if (first == "Enemy")
         {
-            stream >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.OR
-                   >> m_enemyConfig.OG >> m_enemyConfig.OB >> m_enemyConfig.OT
-                   >> m_enemyConfig.VMIN >> m_enemyConfig.VMAX >> m_enemyConfig.L
-                   >> m_enemyConfig.SI >> m_enemyConfig.SMIN >> m_enemyConfig.SMAX;
+            stream >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.SMIN
+                   >> m_enemyConfig.SMAX >> m_enemyConfig.OR >> m_enemyConfig.OG
+                   >> m_enemyConfig.OB >> m_enemyConfig.OT >> m_enemyConfig.VMIN
+                   >> m_enemyConfig.VMAX >> m_enemyConfig.L >> m_enemyConfig.SP;
         }
         else if (first == "Bullet")
         {
-            stream >> m_bulletConfig.SR >> m_bulletConfig.CR >> m_bulletConfig.FR
-                   >> m_bulletConfig.FG >> m_bulletConfig.FB >> m_bulletConfig.OR
-                   >> m_bulletConfig.OG >> m_bulletConfig.OB >> m_bulletConfig.OT
-                   >> m_bulletConfig.V >> m_bulletConfig.L >> m_bulletConfig.S;
+            stream >> m_bulletConfig.SR >> m_bulletConfig.CR >> m_bulletConfig.S
+                   >> m_bulletConfig.FR >> m_bulletConfig.FG >> m_bulletConfig.FB
+                   >> m_bulletConfig.OR >> m_bulletConfig.OG >> m_bulletConfig.OB
+                   >> m_bulletConfig.OT >> m_bulletConfig.V >> m_bulletConfig.L;
         }
     }
 
+    //sf::Text text("Score",m_font,24);
+    if(!m_font.loadFromFile(m_fontConfig.F))
+    {
+        std::cerr << "FONT COULDNT LOAD\n";
+        exit(-1);
+    }
+    m_text.setFont(m_font);
+    m_text.setCharacterSize(m_fontConfig.S);
+    m_text.setFillColor(sf::Color(m_fontConfig.R,m_fontConfig.G,m_fontConfig.B));
+    m_text.setString("Score");
+    m_text.setPosition(0,m_window.getSize().y -(float)m_text.getCharacterSize());
     m_window.create(sf::VideoMode(m_gameConfig.W,m_gameConfig.H),"Game Engine 2D");
     m_window.setFramerateLimit(m_gameConfig.FL);
     spawnPlayer();
@@ -59,9 +71,6 @@ void Game::setPaused(bool paused)
 
 void Game::run()
 {
-    //TODO : add pause functionality
-    // some systems should run while paused
-    // some dont.
     while (m_running)
     {
         m_entities.Update();
@@ -71,6 +80,7 @@ void Game::run()
             sEnemySpawner();
             sMovement();
             sCollision();
+            sLifespan();
             // increment current frame
             m_currentFrame++;
         }
@@ -88,8 +98,8 @@ void Game::spawnPlayer()
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
     entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(0, 0), 0.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
-    entity->cShape = std::make_shared<CShape>(m_playerConfig.SR, m_playerConfig.V, sf::Color(m_playerConfig.FR,m_playerConfig.FG,m_playerConfig.FG),
-                                              sf::Color(m_playerConfig.OG,m_playerConfig.OG,m_playerConfig.OB), m_playerConfig.OT);
+    entity->cShape = std::make_shared<CShape>(m_playerConfig.SR, m_playerConfig.V, sf::Color(m_playerConfig.FR,m_playerConfig.FG,m_playerConfig.FB),
+                                              sf::Color(m_playerConfig.OR,m_playerConfig.OG,m_playerConfig.OB), m_playerConfig.OT);
     // add an input component to the player
     entity->cInput = std::make_shared<CInput>();
     entity->cCollision = std::make_shared<CCollision>(m_playerConfig.CR);
@@ -109,7 +119,10 @@ void Game::spawnEnemy()
     auto entity = m_entities.addEntity("enemy");
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
     //TODO : definir esta data en random.
-    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f,400.0f),Vec2(1,1),1.0f);
+    auto SpawnLocX = 1+(std::rand() %(1+m_window.getSize().x - 1));
+    auto SpawnLocY = 1+(std::rand() %(1+m_window.getSize().y - 1));
+    auto EVel = m_enemyConfig.SMIN +(std::rand() % (1+m_enemyConfig.VMAX - m_enemyConfig.VMIN));
+    entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(m_enemyConfig.VMIN,m_enemyConfig.VMIN),1.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
     auto CO =  sf::Color(m_enemyConfig.OR,m_enemyConfig.OG,m_enemyConfig.OB);
     entity->cShape = std::make_shared<CShape>(m_enemyConfig.SR,8,sf::Color(10,255,10),
@@ -206,9 +219,16 @@ void Game::sLifespan()
     {
         if(!e->cLifespan){continue;}
         auto color = e->cShape->shape.getFillColor();
-        sf::Uint8 alpha = 100;
+        uint8_t alpha = 100;
         sf::Color newColor(color.r,color.g,color.b,alpha);
         e->cShape->shape.setFillColor(newColor);
+        /**
+        while(alpha >0)
+        {
+            alpha -=0.01;
+        }
+        e->destroy();
+         */
     }
 
     //  if its has lifespan and its time is up - destroy entity.
@@ -285,6 +305,7 @@ void Game::sRender()
         //}
         m_window.draw(e->cShape->shape);
     }
+    m_window.draw(m_text);
     m_window.display();
 }
 
@@ -318,7 +339,7 @@ void Game::sUserInput()
                     break;
                     // Options
                 case sf::Keyboard::P:
-                    m_paused=!m_paused;
+                    setPaused(!m_paused);
                     std::cout << "Game Paused :"<< m_paused << std::endl;
                     break;
                 case sf::Keyboard::Escape:
@@ -348,16 +369,19 @@ void Game::sUserInput()
             break;
             }
         }
-        if(event.type == sf::Event::MouseButtonPressed)
+        if(!m_paused)
         {
-            if(event.mouseButton.button==sf::Mouse::Left)
+            if(event.type == sf::Event::MouseButtonPressed)
             {
-                sf::Vector2i position = sf::Mouse::getPosition();
-                spawnBullet(m_player,{static_cast<float>(position.x),static_cast<float>(position.y)});
-            }
-            if(event.mouseButton.button == sf::Mouse::Right)
-            {
-                // TODO : special weapon.
+                if(event.mouseButton.button==sf::Mouse::Left)
+                {
+                    sf::Vector2i position = sf::Mouse::getPosition();
+                    spawnBullet(m_player,{static_cast<float>(position.x),static_cast<float>(position.y)});
+                }
+                if(event.mouseButton.button == sf::Mouse::Right)
+                {
+                    // TODO : special weapon.
+                }
             }
         }
     }

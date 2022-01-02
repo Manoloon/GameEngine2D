@@ -12,6 +12,7 @@
  * shape radius :           SR
  * Collision radius :       CR
  * speed :                  S
+ * Spawn Interval :         SP
  * Fill Color :             FR,FG,FB
  * Outline Color :          OR,OG,OB
  * Outline Thickness :      OT
@@ -22,17 +23,19 @@
  * Frame limit :            FL FullScreen:              FS
  */
 struct GameConfig   {int W,H,FL,FS;};
-struct PlayerConfig {int SR,CR,FR,FG,FB,OR,OG,OB,OT,V; float S;};
-struct EnemyConfig  {int SR,CR,OR,OG,OB,OT,VMIN,VMAX,L,SI; float SMIN;float SMAX;};
-struct BulletConfig {int SR,CR,FR,FG,FB,OR,OG,OB,OT,V,L; float S;};
+struct FontConfig {std::string F; int S,R,G,B;};
+struct PlayerConfig {int SR,CR; float S; int FR,FG,FB,OR,OG,OB,OT,V; };
+struct EnemyConfig  {int SR,CR;float SMIN,SMAX; int OR,OG,OB,OT,VMIN,VMAX,L,SP;};
+struct BulletConfig {int SR,CR; float S; int FR,FG,FB,OR,OG,OB,OT,V,L;};
 
 class Game
 {
     sf::RenderWindow m_window;
     EntityManager   m_entities;
-    sf::Font    m_font;
-    sf::Text    m_text;
+    sf::Font        m_font;
+    sf::Text        m_text;
     GameConfig      m_gameConfig;
+    FontConfig      m_fontConfig;
     PlayerConfig    m_playerConfig;
     EnemyConfig     m_enemyConfig;
     BulletConfig    m_bulletConfig;
