@@ -74,7 +74,6 @@ void Game::run()
     while (m_running)
     {
         m_entities.Update();
-
         if(!m_paused)
         {
             sEnemySpawner();
@@ -119,16 +118,17 @@ void Game::spawnEnemy()
     auto entity = m_entities.addEntity("enemy");
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
     //TODO : definir esta data en random.
-    auto SpawnLocX = 1+(std::rand() %(1+m_window.getSize().x - 1));
-    auto SpawnLocY = 1+(std::rand() %(1+m_window.getSize().y - 1));
-    auto EVel = m_enemyConfig.SMIN +(std::rand() % (1+m_enemyConfig.VMAX - m_enemyConfig.VMIN));
-    entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(m_enemyConfig.VMIN,m_enemyConfig.VMIN),1.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
     auto CO =  sf::Color(m_enemyConfig.OR,m_enemyConfig.OG,m_enemyConfig.OB);
-    entity->cShape = std::make_shared<CShape>(m_enemyConfig.SR,8,sf::Color(10,255,10),
+    auto newColor = sf::Color(std::rand()%255,std::rand()%255,std::rand()%255);
+    entity->cShape = std::make_shared<CShape>(m_enemyConfig.SR,8,newColor,
                                              CO,m_enemyConfig.OT);
     entity->cCollision=std::make_shared<CCollision>(m_enemyConfig.CR);
     entity->cScore = std::make_shared<CScore>(10);
+    auto SpawnLocX = 1+(std::rand() %(1+m_window.getSize().x - 1));
+    auto SpawnLocY = 1+(std::rand() %(1+m_window.getSize().y - 1));
+    auto EVel = m_enemyConfig.VMIN +(std::rand() % (1+m_enemyConfig.VMAX - m_enemyConfig.VMIN));
+    entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(EVel,EVel),100.0f);
     // record when the most recent enemy was spawned
     m_lastEnemySpawnTime = m_currentFrame;
 }
@@ -143,9 +143,9 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
        auto smallEnemy = m_entities.addEntity("small");
        smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,entity->cTransform->velocity,entity->cTransform->angle);
        // set each small enemy to the same color as the original, half the size
-       smallEnemy->cShape = std::make_shared<CShape>(8,vertices,entity->cShape->shape.getFillColor(),
+       smallEnemy->cShape = std::make_shared<CShape>(m_enemyConfig.SR/2,vertices,entity->cShape->shape.getFillColor(),
                                                       entity->cShape->shape.getOutlineColor(),entity->cShape->shape.getOutlineThickness());
-       smallEnemy->cCollision = std::make_shared<CCollision>(8);
+       smallEnemy->cCollision = std::make_shared<CCollision>(m_enemyConfig.CR/2);
        // the small enemies are worth double of the original score.
        smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
        smallEnemy->cLifespan=std::make_shared<CLifespan>(m_enemyConfig.L);
@@ -163,7 +163,7 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
     bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR,m_bulletConfig.V,CF,CO,m_bulletConfig.OT);
     bullet->cLifespan=std::make_shared<CLifespan>(m_bulletConfig.L);
     float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
-    bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(3,newAngle),newAngle);
+    bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(m_bulletConfig.S,newAngle),newAngle);
     bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
 }
 
@@ -204,6 +204,7 @@ void Game::sMovement()
         else
         {
             // TODO : esto es hasta que implementemos el config.txt
+            //e->cTransform->pos += (e->cTransform->velocity * m_enemyConfig.SMAX)/m_currentFrame;
             e->cTransform->pos += e->cTransform->velocity;
         }
     }
@@ -220,15 +221,18 @@ void Game::sLifespan()
         if(!e->cLifespan){continue;}
         auto color = e->cShape->shape.getFillColor();
         uint8_t alpha = 100;
-        sf::Color newColor(color.r,color.g,color.b,alpha);
-        e->cShape->shape.setFillColor(newColor);
-        /**
-        while(alpha >0)
+        while(e->cLifespan->total - e->cLifespan->remaining>0)
         {
-            alpha -=0.01;
+            e->cLifespan->remaining--;
+            std::cout << e->cLifespan->remaining << std::endl;
+            alpha -=1;
+            sf::Color newColor(color.r,color.g,color.b,alpha);
+            e->cShape->shape.setFillColor(newColor);
         }
-        e->destroy();
-         */
+        if(e->cLifespan->remaining <=0)
+        {
+            e->destroy();
+        }
     }
 
     //  if its has lifespan and its time is up - destroy entity.
@@ -281,12 +285,12 @@ void Game::sEnemySpawner()
 {
     // use m_currentFrame - m_lastEnemySpawnTime -> to determine
     // how long it has been since the last enemy spawned
-    int spawnFrequency = 200; // +(std::rand() % (1+700-100));
-    if(m_currentFrame >spawnFrequency)
-    {
-        m_currentFrame -= m_lastEnemySpawnTime;
-        spawnEnemy();
-    }
+        int spawnFrequency = m_enemyConfig.SP; // +(std::rand() % (1+700-100));
+        if(m_currentFrame >spawnFrequency)
+        {
+            m_currentFrame -= m_lastEnemySpawnTime;
+            spawnEnemy();
+        }
 }
 
 void Game::sRender()
@@ -299,10 +303,6 @@ void Game::sRender()
         e->cShape->shape.setPosition(e->cTransform->pos.x,e->cTransform->pos.y);
         e->cTransform->angle +=1.0f;
         e->cShape->shape.setRotation(e->cTransform->angle);
-       // if(m_debugCollisions)
-        //{
-          //  m_window.draw(e->cCollision->shape);
-        //}
         m_window.draw(e->cShape->shape);
     }
     m_window.draw(m_text);

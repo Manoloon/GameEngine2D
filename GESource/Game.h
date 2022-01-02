@@ -39,6 +39,7 @@ class Game
     PlayerConfig    m_playerConfig;
     EnemyConfig     m_enemyConfig;
     BulletConfig    m_bulletConfig;
+    sf::Clock       m_timestepClock;
     int             m_score=0;
     int             m_currentFrame=0;
     int             m_lastEnemySpawnTime =0;
