@@ -71,17 +71,21 @@ void Game::setPaused(bool paused)
 
 void Game::run()
 {
+    sf::Clock m_clock;
     while (m_running)
     {
         m_entities.Update();
         if(!m_paused)
         {
+            sf::Time m_deltaTime = m_clock.restart();
             sEnemySpawner();
-            sMovement();
+            sMovement(m_deltaTime.asSeconds());
             sCollision();
-            sLifespan();
+            sLifespan(m_deltaTime.asSeconds());
             // increment current frame
             m_currentFrame++;
+            //std::cout << m_deltaTime.asSeconds() <<'\n';
+            //std::cout << "Current Frame : " << m_currentFrame <<'\n';
         }
         sUserInput();
         sRender();
@@ -128,7 +132,7 @@ void Game::spawnEnemy()
     auto SpawnLocX = 1+(std::rand() %(1+m_window.getSize().x - 1));
     auto SpawnLocY = 1+(std::rand() %(1+m_window.getSize().y - 1));
     auto EVel = m_enemyConfig.VMIN +(std::rand() % (1+m_enemyConfig.VMAX - m_enemyConfig.VMIN));
-    entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(EVel,EVel),100.0f);
+    entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(m_enemyConfig.VMIN,m_enemyConfig.VMIN),1.0f);
     // record when the most recent enemy was spawned
     m_lastEnemySpawnTime = m_currentFrame;
 }
@@ -141,7 +145,7 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
     for(int i=0;i<vertices;i++)
     {
        auto smallEnemy = m_entities.addEntity("small");
-       smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,entity->cTransform->velocity,entity->cTransform->angle);
+       smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,entity->cTransform->velocity,360/vertices);
        // set each small enemy to the same color as the original, half the size
        smallEnemy->cShape = std::make_shared<CShape>(m_enemyConfig.SR/2,vertices,entity->cShape->shape.getFillColor(),
                                                       entity->cShape->shape.getOutlineColor(),entity->cShape->shape.getOutlineThickness());
@@ -172,7 +176,7 @@ void Game::spawnSpecialWeapon(ptr<Entity> entity)
     //TODO: implement a special weapon.
 }
 
-void Game::sMovement()
+void Game::sMovement(float DeltaTime)
 {
     // TODO : implement all entity movement
 
@@ -210,7 +214,7 @@ void Game::sMovement()
     }
 }
 
-void Game::sLifespan()
+void Game::sLifespan(float DeltaTime)
 {
     //TODO : implement all lifespan funct.
     // if entity has no lifespan comp , skip.
@@ -221,18 +225,16 @@ void Game::sLifespan()
         if(!e->cLifespan){continue;}
         auto color = e->cShape->shape.getFillColor();
         uint8_t alpha = 100;
-        while(e->cLifespan->total - e->cLifespan->remaining>0)
+        if(e->cLifespan->remaining >0)
         {
-            e->cLifespan->remaining--;
-            std::cout << e->cLifespan->remaining << std::endl;
+            e->cLifespan->remaining-=1;
             alpha -=1;
-            sf::Color newColor(color.r,color.g,color.b,alpha);
-            e->cShape->shape.setFillColor(newColor);
         }
+        e->cShape->shape.setFillColor({color.r,color.g,color.b,alpha});
         if(e->cLifespan->remaining <=0)
-        {
-            e->destroy();
-        }
+       {
+         e->destroy();
+       }
     }
 
     //  if its has lifespan and its time is up - destroy entity.
@@ -375,8 +377,9 @@ void Game::sUserInput()
             {
                 if(event.mouseButton.button==sf::Mouse::Left)
                 {
-                    sf::Vector2i position = sf::Mouse::getPosition();
-                    spawnBullet(m_player,{static_cast<float>(position.x),static_cast<float>(position.y)});
+                    //TODO : this is not quite right about mouse aim
+                    auto mousePosition = sf::Mouse::getPosition();
+                    spawnBullet(m_player,{static_cast<float>(mousePosition.x),static_cast<float>(mousePosition.y)});
                 }
                 if(event.mouseButton.button == sf::Mouse::Right)
                 {

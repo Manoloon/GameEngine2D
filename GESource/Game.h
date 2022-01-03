@@ -39,7 +39,6 @@ class Game
     PlayerConfig    m_playerConfig;
     EnemyConfig     m_enemyConfig;
     BulletConfig    m_bulletConfig;
-    sf::Clock       m_timestepClock;
     int             m_score=0;
     int             m_currentFrame=0;
     int             m_lastEnemySpawnTime =0;
@@ -53,9 +52,9 @@ class Game
     void setPaused(bool paused);
 
     // Systems
-    void sMovement();
+    void sMovement(float DeltaTime);
     void sUserInput();
-    void sLifespan();
+    void sLifespan(float DeltaTime);
     void sRender();
     void sEnemySpawner();
     void sCollision();
