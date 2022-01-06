@@ -56,9 +56,11 @@ void Game::init(const std::string &config)
     }
     m_text.setFont(m_font);
     m_text.setCharacterSize(m_fontConfig.S);
-    m_text.setFillColor(sf::Color(m_fontConfig.R,m_fontConfig.G,m_fontConfig.B));
-    m_text.setString("Score");
-    m_text.setPosition(0,m_window.getSize().y -(float)m_text.getCharacterSize());
+    //m_text.setFillColor(sf::Color(m_fontConfig.R,m_fontConfig.G,m_fontConfig.B));
+    m_text.setFillColor(sf::Color::White);
+    m_text.setString("Score" + std::to_string(m_score));
+    m_text.setPosition(0,0);//m_window.getSize().y - m_text.getCharacterSize());
+    //m_text.setPosition(200,200);
     m_window.create(sf::VideoMode(m_gameConfig.W,m_gameConfig.H),"Game Engine 2D");
     m_window.setFramerateLimit(m_gameConfig.FL);
     spawnPlayer();
@@ -121,18 +123,17 @@ void Game::spawnEnemy()
 
     auto entity = m_entities.addEntity("enemy");
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
-    //TODO : definir esta data en random.
-    // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
     auto CO =  sf::Color(m_enemyConfig.OR,m_enemyConfig.OG,m_enemyConfig.OB);
     auto newColor = sf::Color(std::rand()%255,std::rand()%255,std::rand()%255);
-    entity->cShape = std::make_shared<CShape>(m_enemyConfig.SR,8,newColor,
+    size_t vertices = 3 + (std::rand() % 8-3);
+    entity->cShape = std::make_shared<CShape>(m_enemyConfig.SR,vertices,newColor,
                                              CO,m_enemyConfig.OT);
-    entity->cCollision=std::make_shared<CCollision>(m_enemyConfig.CR);
-    entity->cScore = std::make_shared<CScore>(10);
+    entity->cScore = std::make_shared<CScore>(vertices *100);
     auto SpawnLocX = 1+(std::rand() %(1+m_window.getSize().x - 1));
     auto SpawnLocY = 1+(std::rand() %(1+m_window.getSize().y - 1));
     auto EVel = m_enemyConfig.VMIN +(std::rand() % (1+m_enemyConfig.VMAX - m_enemyConfig.VMIN));
     entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(m_enemyConfig.VMIN,m_enemyConfig.VMIN),1.0f);
+    entity->cCollision=std::make_shared<CCollision>(m_enemyConfig.CR);
     // record when the most recent enemy was spawned
     m_lastEnemySpawnTime = m_currentFrame;
 }
@@ -142,17 +143,23 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
     //TODO : spawn small enemies at the location of the input enemy e
     // spawn a number of small enemies equal to the vertices of the original enemy
     int vertices = entity->cShape->shape.getPointCount();
-    for(int i=0;i<vertices;i++)
+    // get the "big" enemy velocity vector and rotate it by (360/n) degrees.
+    // For example for 6 enemies, the first one will be rotated by 60 degrees, the 2nd one by 120 degrees
+    if(vertices<1){return;}
+    float newAngle = 360/vertices;
+    for(int i=1;i<=vertices;i++)
     {
+       float currentAng = newAngle*i;
+       Vec2 newVel = newVel.getVelocity(m_enemyConfig.SMIN,currentAng);
        auto smallEnemy = m_entities.addEntity("small");
-       smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,entity->cTransform->velocity,360/vertices);
+       smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,newVel,currentAng);
        // set each small enemy to the same color as the original, half the size
        smallEnemy->cShape = std::make_shared<CShape>(m_enemyConfig.SR/2,vertices,entity->cShape->shape.getFillColor(),
                                                       entity->cShape->shape.getOutlineColor(),entity->cShape->shape.getOutlineThickness());
-       smallEnemy->cCollision = std::make_shared<CCollision>(m_enemyConfig.CR/2);
        // the small enemies are worth double of the original score.
-       smallEnemy->cScore = std::make_shared<CScore>(entity->cScore->score*2);
+       smallEnemy->cScore = std::make_shared<CScore>(vertices*2);
        smallEnemy->cLifespan=std::make_shared<CLifespan>(m_enemyConfig.L);
+       smallEnemy->cCollision = std::make_shared<CCollision>(m_enemyConfig.CR);
     }
 }
 
@@ -161,14 +168,17 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
     //TODO: implement the spawning of a bullet which travels toward target
     // bullet speed is given as a scalar speed
     // you must set the velocity by using formula in notes.
-    auto bullet = m_entities.addEntity("bullet");
-    const auto CF = sf::Color(m_bulletConfig.FR,m_bulletConfig.FG,m_bulletConfig.FB);
-    const auto CO = sf::Color(sf::Color(m_bulletConfig.OR,m_bulletConfig.OG,m_bulletConfig.OB));
-    bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR,m_bulletConfig.V,CF,CO,m_bulletConfig.OT);
-    bullet->cLifespan=std::make_shared<CLifespan>(m_bulletConfig.L);
-    float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
-    bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(m_bulletConfig.S,newAngle),newAngle);
-    bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
+    if( m_entities.getEntities("bullet").size() <= 4)
+    {
+        auto bullet = m_entities.addEntity("bullet");
+        const auto CF = sf::Color(m_bulletConfig.FR,m_bulletConfig.FG,m_bulletConfig.FB);
+        const auto CO = sf::Color(sf::Color(m_bulletConfig.OR,m_bulletConfig.OG,m_bulletConfig.OB));
+        bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR,m_bulletConfig.V,CF,CO,m_bulletConfig.OT);
+        bullet->cLifespan=std::make_shared<CLifespan>(m_bulletConfig.L);
+        float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
+        bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(m_bulletConfig.S,newAngle),newAngle);
+        bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
+    }
 }
 
 void Game::spawnSpecialWeapon(ptr<Entity> entity)
@@ -224,11 +234,11 @@ void Game::sLifespan(float DeltaTime)
     {
         if(!e->cLifespan){continue;}
         auto color = e->cShape->shape.getFillColor();
-        uint8_t alpha = 100;
+        uint8_t alpha = 255;
         if(e->cLifespan->remaining >0)
         {
             e->cLifespan->remaining-=1;
-            alpha -=1;
+            alpha =e->cLifespan->remaining*255;
         }
         e->cShape->shape.setFillColor({color.r,color.g,color.b,alpha});
         if(e->cLifespan->remaining <=0)
@@ -243,44 +253,54 @@ void Game::sLifespan(float DeltaTime)
 void Game::sCollision()
 {
     // be sure to use the collision radius, NOT shape radius.
-    for(auto p: m_entities.getEntities("player"))
-    {
-        for (auto e : m_entities.getEntities("enemy"))
+    for (auto e : m_entities.getEntities("enemy"))
         {
-            float dist = p->cTransform->pos.distSquare(e->cTransform->pos);
-           if(dist<(p->cCollision->radius + e->cCollision->radius))
+            if(m_player)
             {
-               p->destroy();
-               e->destroy();
-               spawnPlayer();
+                const float dist = m_player->cTransform->pos.dist(e->cTransform->pos);
+                if (dist < (m_player->cCollision->radius * e->cCollision->radius))
+                {
+                    m_player->destroy();
+                    e->destroy();
+                    spawnPlayer();
+                }
+            }
+            for(auto b: m_entities.getEntities("bullet"))
+            {
+                float dist = e->cTransform->pos.dist(b->cTransform->pos);
+                if(dist < (e->cCollision->radius * b->cCollision->radius))
+                {
+                    SpawnSmallEnemies(e);
+                    m_score += e->cScore->score;
+                    e->destroy();
+                    b->destroy();
+                }
             }
         }
-    }
-    for(auto b: m_entities.getEntities("bullet"))
+    for(auto se : m_entities.getEntities("small"))
     {
-        for (auto e : m_entities.getEntities("enemy"))
+        for(auto b: m_entities.getEntities("bullet"))
         {
-            float dist = b->cTransform->pos.dist(e->cTransform->pos);
-            if(dist<(b->cCollision->radius + e->cCollision->radius))
+            float dist = se->cTransform->pos.dist(b->cTransform->pos);
+            if(dist < (se->cCollision->radius * b->cCollision->radius))
             {
-                SpawnSmallEnemies(e);
-                e->destroy();
+                m_score += se->cScore->score;
+                se->destroy();
                 b->destroy();
             }
         }
     }
-
     for(auto e :m_entities.getEntities())
-    {
-        if(e->cTransform->pos.x < 0 ||  e->cTransform->pos.x > m_window.getSize().x)
         {
-            e->cTransform->velocity.x *=-1;
+            if(e->cTransform->pos.x < 0 ||  e->cTransform->pos.x > m_window.getSize().x)
+            {
+                e->cTransform->velocity.x *=-1;
+            }
+            else if (e->cTransform->pos.y < 0 ||  e->cTransform->pos.y > m_window.getSize().y)
+            {
+                e->cTransform->velocity.y *=-1;
+            }
         }
-        else if (e->cTransform->pos.y < 0 ||  e->cTransform->pos.y > m_window.getSize().y)
-        {
-            e->cTransform->velocity.y *=-1;
-        }
-    }
 }
 
 void Game::sEnemySpawner()
@@ -290,8 +310,11 @@ void Game::sEnemySpawner()
         int spawnFrequency = m_enemyConfig.SP; // +(std::rand() % (1+700-100));
         if(m_currentFrame >spawnFrequency)
         {
+           if( m_entities.getEntities("enemy").size() <= 4)
+            {
+                spawnEnemy();
+            }
             m_currentFrame -= m_lastEnemySpawnTime;
-            spawnEnemy();
         }
 }
 
@@ -307,6 +330,7 @@ void Game::sRender()
         e->cShape->shape.setRotation(e->cTransform->angle);
         m_window.draw(e->cShape->shape);
     }
+    m_text.setString("Score : " + std::to_string(m_score));
     m_window.draw(m_text);
     m_window.display();
 }
@@ -378,8 +402,8 @@ void Game::sUserInput()
                 if(event.mouseButton.button==sf::Mouse::Left)
                 {
                     //TODO : this is not quite right about mouse aim
-                    auto mousePosition = sf::Mouse::getPosition();
-                    spawnBullet(m_player,{static_cast<float>(mousePosition.x),static_cast<float>(mousePosition.y)});
+                    auto mousePosition = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
+                    spawnBullet(m_player,{mousePosition.x,mousePosition.y});
                 }
                 if(event.mouseButton.button == sf::Mouse::Right)
                 {

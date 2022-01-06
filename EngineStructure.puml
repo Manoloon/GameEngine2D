@@ -5,6 +5,15 @@ abstract class Game
 abstract class EntityManager
 abstract class Entity
 abstract class Components
+{
+<interface>
+}
+
+abstract class GameEngine
+abstract class Scene
+abstract class assets
+abstract class Animation
+abstract class Action
 
 abstract CTransform
 {
@@ -98,4 +107,21 @@ tag():string &
 id(): size_t
 }
 
+class GameEngine
+{
+m_scenes : map<string,Scene>
+m_window : sf::RenderWindow
+m_assets : Assets
+m_currentScene : string
+m_running : bool
+init() : void
+currentScene() Scene*
+run() : void
+update(): void
+quit() : void
+changeScene(scene) : void
+getAssets() : Assets &
+window() : Window &
+sUserInput() : void
+}
 @enduml

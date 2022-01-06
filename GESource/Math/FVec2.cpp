@@ -77,7 +77,6 @@ Vec2 Vec2::add(float val)
 
 float Vec2::dist(const Vec2 &rvalue) const
 {
-    //return (this->x - rvalue.x * rvalue.x) + (this->y - rvalue.y * rvalue.y);
     return ((rvalue.x - this->x)  * (rvalue.x - this->x))  + ((rvalue.y - this->y)  * (rvalue.y - this->y));
 }
 
@@ -111,11 +110,7 @@ Vec2 Vec2::getVelocity(float speed,const Vec2& targetPos) const
     return {speed * targetPos.normalize().x,speed * targetPos.normalize().y};
 }
 
-float Vec2::distSquare(const Vec2 &rvalue) const
-{
-    Vec2 diffD = {rvalue.x - this->x,rvalue.y - this->y};
-    return diffD.x * diffD.x + diffD.y * diffD.y;
-}
+
 
 
 
