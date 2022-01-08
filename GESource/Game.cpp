@@ -54,16 +54,23 @@ void Game::init(const std::string &config)
         std::cerr << "FONT COULDNT LOAD\n";
         exit(-1);
     }
-    m_text.setFont(m_font);
-    m_text.setCharacterSize(m_fontConfig.S);
-    //m_text.setFillColor(sf::Color(m_fontConfig.R,m_fontConfig.G,m_fontConfig.B));
-    m_text.setFillColor(sf::Color::White);
-    m_text.setString("Score" + std::to_string(m_score));
-    m_text.setPosition(0,0);//m_window.getSize().y - m_text.getCharacterSize());
-    //m_text.setPosition(200,200);
+    m_scoreText.setFont(m_font);
+    m_scoreText.setCharacterSize(m_fontConfig.S);
+    m_scoreText.setFillColor(sf::Color(m_fontConfig.R,m_fontConfig.G,m_fontConfig.B));
+    m_scoreText.setString("Score" + std::to_string(m_score));
+    m_scoreText.setPosition(0, 0);
+
+    m_hiscoreText.setFont(m_font);
+    m_hiscoreText.setCharacterSize(12);
+    m_hiscoreText.setFillColor(sf::Color::Cyan);
+    m_hiscoreText.setString("Hi Score:"+std::to_string(m_hiscore));
+    m_hiscoreText.setPosition(m_gameConfig.W/2,m_gameConfig.H-20);
     m_window.create(sf::VideoMode(m_gameConfig.W,m_gameConfig.H),"Game Engine 2D");
     m_window.setFramerateLimit(m_gameConfig.FL);
     spawnPlayer();
+    m_level =1;
+    m_cantEnemies=4;
+    m_gameOver = false;
 }
 
 void Game::setPaused(bool paused)
@@ -77,7 +84,7 @@ void Game::run()
     while (m_running)
     {
         m_entities.Update();
-        if(!m_paused)
+        if(!m_paused && !m_gameOver)
         {
             sf::Time m_deltaTime = m_clock.restart();
             sEnemySpawner();
@@ -175,8 +182,10 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
         const auto CO = sf::Color(sf::Color(m_bulletConfig.OR,m_bulletConfig.OG,m_bulletConfig.OB));
         bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR,m_bulletConfig.V,CF,CO,m_bulletConfig.OT);
         bullet->cLifespan=std::make_shared<CLifespan>(m_bulletConfig.L);
+        Vec2 diffD = {(mousePos.x - entity->cTransform->pos.x),(mousePos.y - entity->cTransform->pos.y) };
+        Vec2 N = {m_bulletConfig.S  * diffD.normalize().x,m_bulletConfig.S  * diffD.normalize().y};
         float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
-        bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),bullet->cTransform->pos.getVelocity(m_bulletConfig.S,newAngle),newAngle);
+        bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),N,newAngle);
         bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
     }
 }
@@ -262,7 +271,7 @@ void Game::sCollision()
                 {
                     m_player->destroy();
                     e->destroy();
-                    spawnPlayer();
+                    spawnPlayer(); //m_gameOver = true;
                 }
             }
             for(auto b: m_entities.getEntities("bullet"))
@@ -271,7 +280,7 @@ void Game::sCollision()
                 if(dist < (e->cCollision->radius * b->cCollision->radius))
                 {
                     SpawnSmallEnemies(e);
-                    m_score += e->cScore->score;
+                    sUpdateScore(e->cScore->score);
                     e->destroy();
                     b->destroy();
                 }
@@ -284,7 +293,7 @@ void Game::sCollision()
             float dist = se->cTransform->pos.dist(b->cTransform->pos);
             if(dist < (se->cCollision->radius * b->cCollision->radius))
             {
-                m_score += se->cScore->score;
+                sUpdateScore(se->cScore->score);
                 se->destroy();
                 b->destroy();
             }
@@ -310,7 +319,7 @@ void Game::sEnemySpawner()
         int spawnFrequency = m_enemyConfig.SP; // +(std::rand() % (1+700-100));
         if(m_currentFrame >spawnFrequency)
         {
-           if( m_entities.getEntities("enemy").size() <= 4)
+           if( m_entities.getEntities("enemy").size() <= m_cantEnemies)
             {
                 spawnEnemy();
             }
@@ -330,8 +339,9 @@ void Game::sRender()
         e->cShape->shape.setRotation(e->cTransform->angle);
         m_window.draw(e->cShape->shape);
     }
-    m_text.setString("Score : " + std::to_string(m_score));
-    m_window.draw(m_text);
+    m_scoreText.setString("Score : " + std::to_string(m_score));
+    m_window.draw(m_scoreText);
+    m_window.draw(m_hiscoreText);
     m_window.display();
 }
 
@@ -375,6 +385,11 @@ void Game::sUserInput()
                     m_debugCollisions =!m_debugCollisions;
                     std::cout << "Debug Collisions :"<< m_debugCollisions << std::endl;
                     break;
+                    //TODO: REstart game
+                case sf::Keyboard::R:
+                    m_score = 0;
+                    m_gameOver= false;
+                    break;
             }
         }
         if(event.type == sf::Event::KeyReleased)
@@ -411,5 +426,20 @@ void Game::sUserInput()
                 }
             }
         }
+    }
+}
+
+void Game::sUpdateScore(const int newScore)
+{
+    m_score +=newScore;
+    if(m_score > m_score * m_level)
+    {
+        m_level++;
+        m_cantEnemies *=m_level;
+    }
+    if(m_score > m_hiscore)
+    {
+        m_hiscore = m_score;
+        m_hiscoreText.setString("Hi Score:"+std::to_string(m_hiscore));
     }
 }

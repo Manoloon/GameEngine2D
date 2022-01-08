@@ -33,17 +33,23 @@ class Game
     sf::RenderWindow m_window;
     EntityManager   m_entities;
     sf::Font        m_font;
-    sf::Text        m_text;
+    sf::Text        m_scoreText;
+    sf::Text        m_hiscoreText;
     GameConfig      m_gameConfig;
     FontConfig      m_fontConfig;
     PlayerConfig    m_playerConfig;
     EnemyConfig     m_enemyConfig;
     BulletConfig    m_bulletConfig;
     int             m_score=0;
+    int             m_hiscore = 1000;
+    int             m_level=1;
+    int             m_cantEnemies=4;
     int             m_currentFrame=0;
     int             m_lastEnemySpawnTime =0;
     bool            m_paused= false;
     bool            m_running=true;
+    bool            m_restart=false;
+    bool            m_gameOver = true;
     bool            m_debugCollisions= false;
 
     ptr<Entity> m_player;
@@ -58,6 +64,7 @@ class Game
     void sRender();
     void sEnemySpawner();
     void sCollision();
+    void sUpdateScore(const int newScore);
 
     void spawnPlayer();
     void spawnEnemy();
