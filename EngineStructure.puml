@@ -1,29 +1,19 @@
 @startuml
 'https://plantuml.com/class-diagram
-class GameEngine
-abstract Scene
-class Scene_Play
-class Scene_Menu
-Scene <|-- Scene_Menu
-Scene <|-- Scene_Play
 
 class Game
-class EntityManager
-class Entity
 class Components
 {
 <interface>
 }
-class assets
-class Animation
-class Action
 
 class CTransform
 {
-pos: Vec2
-speed: Vec2
-scale: Vec2
-angle: float
+pos             :   Vec2
+DEP speed: Vec2
+velocity        :   Vec2
+scale           :   Vec2
+angle           :   float
 CTransform(pos,velocity,angle)
 }
 Entity<|--Components
@@ -33,6 +23,14 @@ Components<|--CLifespan
 Components<|---CScore
 Components<|--CCollision
 Components<|---CShape
+Components<|---CBBCollision
+Scene <|-- Scene_Menu
+Scene <|-- Scene_Play
+
+class CBBCollision
+{
+m_size      :   Vec2
+}
 class CCollision
 {
 radius: float
@@ -94,20 +92,25 @@ getEntities(s): vector<sp<Entity>>&
 
 class Entity
 {
-m_tag       : string
-m_active    : bool
-m_id        : size_t
-//Components
-cTransform: CTransform
-cShape:    CShape
-cCollision: CCollision
-cInput:     CInput
-cScore:     CScore
-cLifespan:  CLifespan
+m_tag           :   string
+m_active        :   bool
+m_id            :   size_t
+m_components    :   tuple<C1,C2,.>
+
+DEP cTransform: CTransform
+DEP cShape:    CShape
+DEP cCollision: CCollision
+DEP cInput:     CInput
+DEP cScore:     CScore
+DEP cLifespan:  CLifespan
 destroy():void
 isActive():bool
 tag():string &
 id(): size_t
+addComponent<C>() :   void
+hasComponent<C>() :   bool
+getComponent<C>() :   C &
+removeCompont<C>():   void
 }
 
 class GameEngine
@@ -163,5 +166,71 @@ class Scene_Menu
 {
 m_menuStrings   :   vec<string>
 m_menuText      :   sf::Text
+m_levelPath     :   vec<string>
+m_menuIndex     :   int
+init()          :   void
+update()        :   void
+//Systems()
+sRender()       :   void
+sDoActions()    :   void
 }
+
+class Assets
+{
+textureMap                          :   map<string,sf::texture>
+animationMap                        :   map<string,Animation>
+soundMap                            :   map<string,sf::Sound>
+fontMap                             :   map<string,sf::Font>
+addTexture(name,path)               :   void
+addAnimation(name,animation)        :   void
+addSound(name,path)                 :   void
+addFont(name,path)                  :   void
+
+getTexture(name)                    :   sf::Texture &
+getAnimation(name)                  :   Animation &
+getSound(name)                      :   sf::Sound &
+getFont(name)                       :   sf::Font &
+}
+
+class Animation
+{
+m_sprite        :   sf::Sprite
+m_frameCount    :   int
+m_currentFrame  :   int
+m_speed         :   int
+m_size          :   Vec2
+m_name          :   string
+update()        :   void
+hasEnded()      :   bool
+getName()       :   string &
+getSize()       :   Vec2 &
+getSprite()     :   sf::Sprite &
+}
+class FVec2
+{
+x               :   double
+y               :   double
+operator ==     :   bool
+operator !=     :   bool
+operator +      :   Vec2
+operator -      :   Vec2
+operator *      :   Vec2
+operator /      :   Vec2
+normalize()     :   void
+length()        :   double
+}
+class Action
+{
+m_name          :   string
+m_type          :   string
+getName()       :   string &
+getType()       :   string &
+}
+class Physics
+{
+    isCollision(Entity,Entity)      :   bool
+    isIntersect(Line,Line)          :   bool
+    isInside(Vec2,Line)             :   bool
+}
+
 @enduml
