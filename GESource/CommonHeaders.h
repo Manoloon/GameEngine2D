@@ -10,6 +10,7 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <cassert>
 #include <algorithm>
 #include "Math/FVec2.h"
 
