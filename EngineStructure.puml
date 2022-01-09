@@ -1,21 +1,24 @@
 @startuml
 'https://plantuml.com/class-diagram
+class GameEngine
+abstract Scene
+class Scene_Play
+class Scene_Menu
+Scene <|-- Scene_Menu
+Scene <|-- Scene_Play
 
-abstract class Game
-abstract class EntityManager
-abstract class Entity
-abstract class Components
+class Game
+class EntityManager
+class Entity
+class Components
 {
 <interface>
 }
+class assets
+class Animation
+class Action
 
-abstract class GameEngine
-abstract class Scene
-abstract class assets
-abstract class Animation
-abstract class Action
-
-abstract CTransform
+class CTransform
 {
 pos: Vec2
 speed: Vec2
@@ -30,24 +33,24 @@ Components<|--CLifespan
 Components<|---CScore
 Components<|--CCollision
 Components<|---CShape
-abstract CCollision
+class CCollision
 {
 radius: float
 CCollision(float r)
 }
-abstract CLifespan
+class CLifespan
 {
 remaining:int
 total:int
 CLifespan(int remain, int total)
 }
-abstract CScore
+class CScore
 {
 score: int
 CScore(int s)
 }
 
-abstract CInput
+class CInput
 {
 up:bool
 left:bool
@@ -56,7 +59,7 @@ down:bool
 shoot:bool
 SecShoot:bool
 }
-abstract CShape
+class CShape
 {
 shape:sf::CircleShape
 CShape(radius,points,colorFill,colOutline,thickness)
@@ -123,5 +126,42 @@ changeScene(scene) : void
 getAssets() : Assets &
 window() : Window &
 sUserInput() : void
+}
+abstract Scene
+{
+m_game : GameEngine *
+m_entities : EntityManager
+m_currentFrame : int
+m_actionMap : map<int,string>
+m_paused : bool
+m_hasEnded : bool
+update() : void=0
+sDoAction(action) : void=0
+sRender() : void=0
+simulate(int) : void
+doAction(action) : void
+registerAction(action) : void
+}
+
+class Scene_Play
+{
+m_levelPath     :   string
+m_player        :   m_entity
+playerConfig    :   PlayerConfig
+init()          :   void
+update()        :   void
+// Systems()
+sAnimation()    :   void
+sMovement()     :   void
+sEnemySpawner() :   void
+sCollision()    :   void
+sRender()       :   void
+sDoAction()     :   void
+sDebug()        :   void
+}
+class Scene_Menu
+{
+m_menuStrings   :   vec<string>
+m_menuText      :   sf::Text
 }
 @enduml
