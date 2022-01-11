@@ -3,6 +3,7 @@
 //
 
 #include "Animation.h"
+#include <math.h>
 
 Animation::Animation(const std::string &name, const sf::Texture &t):m_name(name)
 {
@@ -28,6 +29,7 @@ void Animation::update()
 
 bool Animation::hasEnded() const
 {
+    //TODO : detect when animation has ended and return true
     return false;
 }
 

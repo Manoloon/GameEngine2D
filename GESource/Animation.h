@@ -5,7 +5,7 @@
 #ifndef GAMEENGINE2D_ANIMATION_H
 #define GAMEENGINE2D_ANIMATION_H
 #include "CommonHeaders.h"
-#include <math.h>
+#include <vector>
 
 class Animation
 {
