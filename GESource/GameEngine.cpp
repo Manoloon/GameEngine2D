@@ -39,9 +39,9 @@ void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene
 
 }
 
-Assets &GameEngine::getAssets() const
+const Assets &GameEngine::getAssets() const
 {
-    return <#initializer#>;
+    return m_assets;
 }
 
 sf::RenderWindow &GameEngine::window()

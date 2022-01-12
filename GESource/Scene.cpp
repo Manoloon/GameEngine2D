@@ -34,7 +34,7 @@ size_t Scene::getWidth() const
     return m_game->window().getSize().x;
 }
 
-size_t Scene::getcurrentFrame() const
+size_t Scene::getCurrentFrame() const
 {
     return m_currentFrame;
 }

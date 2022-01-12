@@ -15,9 +15,9 @@ class Scene
 public:
     Scene();
     explicit Scene(GameEngine * gameEngine):m_game(gameEngine){}
-private:
+protected:
     GameEngine * m_game;
-    EntityManager m_entities;
+    EntityManager m_entityManager;
     int m_currentFrame;
     std::map<int,std::string> m_actionMap;
     bool m_paused;
@@ -33,7 +33,7 @@ public:
     void setPaused(bool paused);
     size_t getWidth() const;
     size_t getHeight() const;
-    size_t getcurrentFrame()const;
+    size_t getCurrentFrame()const;
 
 
 };

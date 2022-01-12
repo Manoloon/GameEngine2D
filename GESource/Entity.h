@@ -9,6 +9,19 @@
 #include "CommonHeaders.h"
 #include "Components.h"
 
+// TODO: esto porque?
+class EntityManager;
+
+typedef std::tuple<
+        CTransform,
+        CLifespan,
+        CInput,
+        CAnimation,
+        CGravity,
+        CBBCollision,
+        CState
+        >ComponentTuple;
+
 class Entity
 {
     //we declare EntityManager our friend, ergo he is the only one who can
@@ -18,6 +31,7 @@ class Entity
     const size_t m_id =0;
     const std::string m_tag = "default";
     bool m_alive =true;
+    ComponentTuple m_components;
 public:
     // crear componentes...
     ptr<CShape>     cShape;
@@ -31,6 +45,42 @@ public:
     const std::string &  GetTag()const;
     bool isActive()const;
     void destroy();
+
+    template<typename T>
+    bool hasComponent() const
+    {
+        return getComponent<T>().has;
+    }
+
+    template<typename T,typename... TArgs>
+    T & addComponent(TArgs&&... mArgs)
+    {
+        auto & component = getComponent<T>();
+        component = T(std::forward<TArgs>(mArgs)...);
+        return component;
+    }
+
+    template<typename T>
+    T & getComponent()
+    {
+        return std::get<T>(m_components);
+    }
+    template<typename T>
+    T & getComponent() const
+    {
+        return std::get<T>(m_components);
+    }
+
+    // TODO : implementar el removeComponent template
+    template<typename T>
+    void RemoveComponent(T)
+    {
+       if(std::get<T>(m_components))
+       {
+
+       }
+    }
+
 };
 
 

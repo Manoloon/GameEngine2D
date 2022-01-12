@@ -21,12 +21,16 @@ struct CState : public Component
 
 struct CTransform : public Component
 {
-    Vec2 pos = {0.0, 0.0};
-    Vec2 velocity = {0.0, 0.0};
-    float angle = 0;
+    Vec2 pos            ={0.0, 0.0};
+    Vec2 prevPos        ={0.0,0.0};
+    Vec2 scale          ={1.0,1.0};
+    Vec2 velocity       ={0.0, 0.0};
+    float angle         =0;
 
-    CTransform(const Vec2 &p, const Vec2 &vel, float ang) : pos(p), velocity(vel), angle(ang)
-    {}
+    CTransform(){}
+    CTransform(const Vec2 & p) : pos(p){}
+    CTransform(const Vec2 & p, const Vec2 & vel, const Vec2 & sc, float ang)
+    : pos(p),prevPos(p), velocity(vel),scale(sc), angle(ang){}
 };
 
 struct CShape : public Component
@@ -80,6 +84,8 @@ struct CInput : public Component
     bool down=false;
     bool shoot= false;
     bool SecShoot= false;
+    bool canShoot = true;
+    bool canJump = true;
     CInput()= default;
 };
 
@@ -97,5 +103,11 @@ struct CAnimation : public Component
             CAnimation(){}
             CAnimation(const Animation & a, bool r): animation(a), repeat(r){}
         };
-
+struct CBBCollision : public Component
+        {
+            Vec2 size;
+            Vec2 halfSize;
+            CBBCollision(){}
+            CBBCollision(const Vec2 & s):size(s), halfSize(s.x/2.0f,s.y/2.0f){}
+        };
 #endif //GAMEENGINE2D_COMPONENTS_H

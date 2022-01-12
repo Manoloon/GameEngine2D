@@ -28,11 +28,11 @@ protected:
 public:
     explicit GameEngine(const std::string & path);
 
-    void quit();
     void changeScene(const std::string & sceneName,std::shared_ptr<Scene> scene, bool endCurrentScene = false);
-    Assets & getAssets() const;
+    const Assets & getAssets() const;
     sf::RenderWindow & window();
     void run();
+    void quit();
     bool isRunning();
 
 };

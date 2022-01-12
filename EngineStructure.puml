@@ -29,7 +29,7 @@ Scene <|-- Scene_Play
 
 class CBBCollision
 {
-m_size      :   Vec2
+size      :   Vec2
 }
 class CCollision
 {
@@ -135,7 +135,7 @@ isRunning() : bool
 abstract Scene
 {
 m_game : GameEngine *
-m_entities : EntityManager
+m_entityManager : EntityManager
 m_currentFrame : int
 m_actionMap : map<int,string>
 m_paused : bool
