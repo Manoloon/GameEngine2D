@@ -11,6 +11,18 @@ class Scene_Menu : public Scene
 {
 public:
     explicit Scene_Menu (GameEngine * gameEngine);
+
+private:
+    std::string             m_title;
+    std::vector<std::string>   m_menuString{};
+    std::vector<std::string>   m_levelPaths{};
+    int                     m_selectedMenuIndex=0;
+    sf::Text                m_menuText;
+    void init();
+    void onEnd();
+public:
+    void sDoAction(const Action& action);
+    void update() override;
 };
 
 

@@ -97,7 +97,23 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity>entity)
 
 void Scene_Play::update()
 {
-    m_entityManager.update();
+    sf::Clock m_clock;
+    m_entityManager.Update();
+    //TODO : implement pause funct
+    if(!m_paused)
+    {
+        sf::Time m_deltaTime = m_clock.restart();
+        sMovement();
+        sLifespan();
+        sCollision();
+        sAnimation();
+        // increment current frame
+        m_currentFrame++;
+        //std::cout << m_deltaTime.asSeconds() <<'\n';
+        //std::cout << "Current Frame : " << m_currentFrame <<'\n';
+    }
+    sRender();
+
 }
 
 void Scene_Play::sAnimation()
@@ -110,24 +126,24 @@ void Scene_Play::sAnimation()
 
 void Scene_Play::sDoAction(const Action & action)
 {
-    if(action.type() == "START")
+    if(action.getType() == "START")
     {
-        if(action.name() == "TOGGLE_TEXTURE")       {m_drawTextures = !m_drawTextures;}
-        if(action.name() == "TOGGLE_COLLISION")     {m_drawCollision = !m_drawCollision;}
-        if(action.name() == "TOGGLE_GRID")          {m_drawGrid = !m_drawGrid;}
-        if(action.name() == "PAUSE")                {m_paused = !m_paused;}
-        if(action.name() == "QUIT")                 {onEnd();}
-        if(action.name() == "RIGHT")                {m_player->getComponent<CInput>().right = true;}
-        if(action.name() == "LEFT")                 {m_player->getComponent<CInput>().left = true;}
-        if(action.name() == "UP")                   {m_player->getComponent<CInput>().up = true;}
-        if(action.name() == "DOWN")                 {m_player->getComponent<CInput>().down = true;}
+        if(action.getName() == "TOGGLE_TEXTURE")       {m_drawTextures = !m_drawTextures;}
+        if(action.getName() == "TOGGLE_COLLISION")     {m_drawCollision = !m_drawCollision;}
+        if(action.getName() == "TOGGLE_GRID")          {m_drawGrid = !m_drawGrid;}
+        if(action.getName() == "PAUSE")                {m_paused = !m_paused;}
+        if(action.getName() == "QUIT")                 {onEnd();}
+        if(action.getName() == "RIGHT")                {m_player->getComponent<CInput>().right = true;}
+        if(action.getName() == "LEFT")                 {m_player->getComponent<CInput>().left = true;}
+        if(action.getName() == "UP")                   {m_player->getComponent<CInput>().up = true;}
+        if(action.getName() == "DOWN")                 {m_player->getComponent<CInput>().down = true;}
     }
-    else if (action.type() == "END")
+    else if (action.getType() == "END")
     {
-        if(action.name() == "RIGHT")                {m_player->getComponent<CInput>().right = false;}
-        if(action.name() == "LEFT")                 {m_player->getComponent<CInput>().left = false;}
-        if(action.name() == "UP")                   {m_player->getComponent<CInput>().up = false;}
-        if(action.name() == "DOWN")                 {m_player->getComponent<CInput>().down = false;}
+        if(action.getName() == "RIGHT")                {m_player->getComponent<CInput>().right = false;}
+        if(action.getName() == "LEFT")                 {m_player->getComponent<CInput>().left = false;}
+        if(action.getName() == "UP")                   {m_player->getComponent<CInput>().up = false;}
+        if(action.getName() == "DOWN")                 {m_player->getComponent<CInput>().down = false;}
     }
 }
 
