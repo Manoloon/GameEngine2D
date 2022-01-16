@@ -36,7 +36,7 @@ public:
     void sLifespan();
     void sEnemySpawner();
     void sCollision();
-    void sRender();
+    //void sRender();
     void sDoAction(const Action & action) override;
     void sDebug();
     void onEnd();

@@ -5,7 +5,6 @@
 #ifndef GAMEENGINE2D_ANIMATION_H
 #define GAMEENGINE2D_ANIMATION_H
 #include "CommonHeaders.h"
-#include <vector>
 
 class Animation
 {
@@ -17,7 +16,7 @@ class Animation
     std::string  m_name = "none";
 
 public:
-    Animation();
+    Animation()=default;
     explicit Animation(const std::string & name, const sf::Texture & t);
     explicit Animation(const std::string & name, const sf::Texture & t, size_t frameCount,size_t speed);
     void update();

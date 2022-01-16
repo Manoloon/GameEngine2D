@@ -113,7 +113,6 @@ void Scene_Play::update()
         //std::cout << "Current Frame : " << m_currentFrame <<'\n';
     }
     sRender();
-
 }
 
 void Scene_Play::sAnimation()

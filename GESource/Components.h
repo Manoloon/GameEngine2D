@@ -9,7 +9,7 @@
 
 struct Component
         {
-
+            Component()=default;
         };
 
 struct CState : public Component
@@ -70,7 +70,7 @@ struct CLifespan : public Component
 {
     int remaining = 0;
     int total = 0;
-
+    CLifespan()=default;
     explicit CLifespan(int total)
             : remaining(total), total(total)
     {}

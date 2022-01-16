@@ -4,8 +4,7 @@
 
 #ifndef GAMEENGINE2D_ENTITY_H
 #define GAMEENGINE2D_ENTITY_H
-#include <cstddef>
-#include <string>
+
 #include "CommonHeaders.h"
 #include "Components.h"
 
@@ -33,8 +32,7 @@ class Entity
     const std::string m_tag = "default";
     bool m_alive =true;
     ComponentTuple m_components;
-
-    Entity(const size_t &m_id, const std::string &m_tags);
+    Entity(const size_t &m_id, const std::string &m_tags): m_id(m_id), m_tag(m_tags){};
 public:
     // crear componentes...
     ptr<CShape>     cShape;
@@ -44,9 +42,9 @@ public:
     ptr<CScore>     cScore;
     ptr<CLifespan>  cLifespan;
 
-    size_t GetId()const;
-    const std::string &  GetTag()const;
-    bool isActive()const;
+    size_t GetId()  const;
+    const std::string &  GetTag()   const;
+    bool isActive() const;
     void destroy();
 
     template<typename T>
@@ -75,6 +73,7 @@ public:
     }
 
     // TODO : implementar el removeComponent template
+    /*
     template<typename T>
     void RemoveComponent(T)
     {
@@ -82,7 +81,7 @@ public:
        {
 
        }
-    }
+    }*/
 
 };
 

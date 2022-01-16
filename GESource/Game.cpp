@@ -108,7 +108,7 @@ void Game::spawnPlayer()
     auto entity = m_entities.addEntity("player");
 
     // gives this entity a transform so it spawns at (200,200) with velocity (1,1) and angle 0
-    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(0, 0), 0.0f);
+    //entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(0, 0), 0.0f);
     // the entity shape will have a radius 32, 8 sides, dark grey fill , and red outline of thickness 4
     entity->cShape = std::make_shared<CShape>(m_playerConfig.SR, m_playerConfig.V, sf::Color(m_playerConfig.FR,m_playerConfig.FG,m_playerConfig.FB),
                                               sf::Color(m_playerConfig.OR,m_playerConfig.OG,m_playerConfig.OB), m_playerConfig.OT);
@@ -139,7 +139,7 @@ void Game::spawnEnemy()
     auto SpawnLocX = 1+(std::rand() %(1+m_window.getSize().x - 1));
     auto SpawnLocY = 1+(std::rand() %(1+m_window.getSize().y - 1));
     auto EVel = m_enemyConfig.VMIN +(std::rand() % (1+m_enemyConfig.VMAX - m_enemyConfig.VMIN));
-    entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(m_enemyConfig.VMIN,m_enemyConfig.VMIN),1.0f);
+    //entity->cTransform = std::make_shared<CTransform>(Vec2(SpawnLocX,SpawnLocY), Vec2(m_enemyConfig.VMIN,m_enemyConfig.VMIN),1.0f);
     entity->cCollision=std::make_shared<CCollision>(m_enemyConfig.CR);
     // record when the most recent enemy was spawned
     m_lastEnemySpawnTime = m_currentFrame;
@@ -159,7 +159,7 @@ void Game::SpawnSmallEnemies(ptr<Entity> entity)
        float currentAng = newAngle*i;
        Vec2 newVel = newVel.getVelocity(m_enemyConfig.SMIN,currentAng);
        auto smallEnemy = m_entities.addEntity("small");
-       smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,newVel,currentAng);
+       //smallEnemy->cTransform = std::make_shared<CTransform>(entity->cTransform->pos,newVel,currentAng);
        // set each small enemy to the same color as the original, half the size
        smallEnemy->cShape = std::make_shared<CShape>(m_enemyConfig.SR/2,vertices,entity->cShape->shape.getFillColor(),
                                                       entity->cShape->shape.getOutlineColor(),entity->cShape->shape.getOutlineThickness());
@@ -185,7 +185,7 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 &mousePos)
         Vec2 diffD = {(mousePos.x - entity->cTransform->pos.x),(mousePos.y - entity->cTransform->pos.y) };
         Vec2 N = {m_bulletConfig.S  * diffD.normalize().x,m_bulletConfig.S  * diffD.normalize().y};
         float newAngle = entity->cTransform->pos.getAngle(mousePos-entity->cTransform->pos);
-        bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),N,newAngle);
+        //bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x,entity->cTransform->pos.y),N,newAngle);
         bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
     }
 }
