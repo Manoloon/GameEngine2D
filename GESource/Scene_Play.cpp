@@ -197,7 +197,6 @@ void Scene_Play::sCollision()
 
 void Scene_Play::onEnd()
 {
-    //TODO : whe the scene ends, change back to the menu scene
     m_game->changeScene("MENU",nullptr,true);
 }
 

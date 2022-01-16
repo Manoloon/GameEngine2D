@@ -12,7 +12,8 @@
 // TODO: esto porque?
 class EntityManager;
 
-typedef std::tuple<
+using ComponentTuple =
+        std::tuple<
         CTransform,
         CLifespan,
         CInput,
@@ -20,18 +21,20 @@ typedef std::tuple<
         CGravity,
         CBBCollision,
         CState
-        >ComponentTuple;
+        >;
 
 class Entity
 {
     //we declare EntityManager our friend, ergo he is the only one who can
     // create an instance of this class.
     friend class EntityManager;
-    explicit Entity(size_t m_id,const std::string& m_tag);
+
     const size_t m_id =0;
     const std::string m_tag = "default";
     bool m_alive =true;
     ComponentTuple m_components;
+
+    Entity(const size_t & m_id, const std::string & m_tag);
 public:
     // crear componentes...
     ptr<CShape>     cShape;

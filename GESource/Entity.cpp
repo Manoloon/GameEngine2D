@@ -4,8 +4,9 @@
 
 #include "Entity.h"
 
-Entity::Entity(size_t m_id,const std::string& m_tag)
-        :m_id(m_id),m_tag(m_tag){}
+Entity::Entity(const size_t & m_id, const std::string &m_tags)
+        : m_id(m_id), m_tag(m_tags)
+{}
 
 size_t Entity::GetId() const
 {

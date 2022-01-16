@@ -14,7 +14,7 @@ struct PlayerConfig
 
 class Scene_Play : public Scene
 {
-protected:
+private:
     std::string m_levelPath;
     ptr<Entity> m_player;
     PlayerConfig  playerConfig;
@@ -26,10 +26,10 @@ protected:
 public:
     Scene_Play();
     void spawnPlayer();
-    void spawnBullet(std::shared_ptr<Entity>entity);
     explicit Scene_Play(GameEngine * gameEngine, const std::string & levelPath);
+    void spawnBullet(std::shared_ptr<Entity>entity);
     void init(const std::string & levelPath);
-    virtual void update() override;
+    void update() override;
 // Systems()
     void sAnimation();
     void sMovement();
@@ -37,7 +37,7 @@ public:
     void sEnemySpawner();
     void sCollision();
     void sRender();
-    void sDoAction(const Action & action);
+    void sDoAction(const Action & action) override;
     void sDebug();
     void onEnd();
     Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);

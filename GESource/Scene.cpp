@@ -3,20 +3,13 @@
 //
 
 #include "Scene.h"
+#include "GameEngine.h"
 
-Scene::Scene(GameEngine *gameEngine)
-{
-
-}
+Scene::Scene(GameEngine *gameEngine):m_game(gameEngine){}
 
 void Scene::simulate(int)
 {
-
-}
-
-void Scene::doAction(Action)
-{
-
+    // TODO : simulate differents behavior automatic.
 }
 
 void Scene::registerAction(int inputKey ,std::string actionName)
@@ -47,4 +40,14 @@ size_t Scene::getHeight() const
 std::map<int, std::string> Scene::getActionMap() const
 {
     return m_actionMap;
+}
+
+void Scene::doAction(const Action & action)
+{
+
+}
+
+void Scene::sRender()
+{
+
 }

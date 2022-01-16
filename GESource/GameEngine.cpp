@@ -61,7 +61,7 @@ void GameEngine::sUserInput()
 
 void GameEngine::quit()
 {
-
+    m_running = false;
 }
 
 void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene)
@@ -97,7 +97,7 @@ void GameEngine::run()
     }
 }
 
-bool GameEngine::isRunning()
+bool GameEngine::isRunning() const
 {
     return m_running;
 }

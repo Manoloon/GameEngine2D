@@ -40,7 +40,7 @@ void Scene_Menu::update()
     m_entityManager.Update();
 }
 
-void Scene_Menu::sDoAction(const Action &action)
+void Scene_Menu::sDoAction(const Action& action)
 {
     if(action.getType() == "START")
     {
@@ -66,5 +66,5 @@ void Scene_Menu::sDoAction(const Action &action)
 
 void Scene_Menu::onEnd()
 {
-    //TODO : quit game.
+    m_game->quit();
 }

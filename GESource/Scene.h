@@ -10,13 +10,15 @@
 
 class GameEngine;
 
-typedef std::map<int,std::string> ActionMap;
+using ActionMap = std::map<int,std::string>;
 
 class Scene
 {
 public:
-    Scene();
-    explicit Scene(GameEngine * gameEngine):m_game(gameEngine){}
+    Scene()=default;
+
+    explicit Scene(GameEngine * gameEngine);
+
 protected:
     GameEngine *            m_game = nullptr;
     EntityManager           m_entityManager;
@@ -25,11 +27,11 @@ protected:
     bool                    m_paused = false;
     bool                    m_hasEnded = false;
 public:
+    void doAction(const Action & action);
     virtual void update()=0;
-    virtual void sDoAction(Action & action)=0;
-    virtual void sRender()=0;
+    void sRender();
+    virtual void sDoAction(const Action & action)=0;
     void simulate(int);
-    void doAction(Action);
     void registerAction(int inputKey ,std::string actionName);
 
     void setPaused(bool paused);
@@ -38,6 +40,7 @@ public:
     size_t getCurrentFrame()const;
     std::map<int,std::string> getActionMap() const;
 
+    virtual ~Scene();
 
 };
 

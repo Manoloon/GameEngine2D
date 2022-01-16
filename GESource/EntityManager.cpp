@@ -28,7 +28,7 @@ void EntityManager::Update()
 ptr<Entity> EntityManager::addEntity(const std::string &tag)
 {
     // We declare it this way because Entity have a private constructor.
-    auto newEntity = ptr<Entity>(new Entity(m_totalEntities++,tag));
+    auto newEntity = ptr<Entity>(new Entity(m_totalEntities++, tag));
     // store it in the queue for beeing store on the next frame.
     m_toAdd.push_back(newEntity);
     // return the entity obj

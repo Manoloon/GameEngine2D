@@ -9,11 +9,11 @@
 #include "Assets.h"
 #include <memory>
 
-typedef std::map<std::string,std::shared_ptr<Scene>> SceneMap;
+using SceneMap = std::map<std::string, std::shared_ptr<Scene>>;
 
 class GameEngine
 {
-protected:
+private:
     SceneMap            m_sceneMap;
     sf::RenderWindow    m_window;
     Assets              m_assets;
@@ -33,7 +33,7 @@ public:
     sf::RenderWindow & window();
     void run(); // game main loop
     void quit();
-    bool isRunning();
+    bool isRunning() const;
 
 };
 

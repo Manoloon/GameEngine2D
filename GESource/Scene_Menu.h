@@ -10,20 +10,18 @@
 class Scene_Menu : public Scene
 {
 public:
+    Scene_Menu() = default;
     explicit Scene_Menu (GameEngine * gameEngine);
-
+    void sDoAction(const Action& action) override;
+    void update() override;
 private:
-    std::string             m_title;
-    std::vector<std::string>   m_menuString{};
-    std::vector<std::string>   m_levelPaths{};
-    int                     m_selectedMenuIndex=0;
-    sf::Text                m_menuText;
+    std::string                 m_title;
+    std::vector<std::string>    m_menuString{};
+    std::vector<std::string>    m_levelPaths{};
+    int                         m_selectedMenuIndex=0;
+    sf::Text                    m_menuText;
     void init();
     void onEnd();
-public:
-    void sDoAction(const Action& action);
-    void update() override;
 };
-
 
 #endif //GAMEENGINE2D_SCENE_MENU_H
