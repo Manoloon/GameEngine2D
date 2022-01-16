@@ -34,7 +34,7 @@ class Entity
     bool m_alive =true;
     ComponentTuple m_components;
 
-    Entity(const size_t & m_id, const std::string & m_tag);
+    Entity(const size_t &m_id, const std::string &m_tags);
 public:
     // crear componentes...
     ptr<CShape>     cShape;
