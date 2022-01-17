@@ -15,7 +15,7 @@ GameEngine::GameEngine(const std::string &path)
 void GameEngine::init(const std::string &path)
 {
     m_assets.LoadFromFile(path);
-    m_window.create(sf::VideoMode(1280,768),"Mario 20");
+    m_window.create(sf::VideoMode(1280,760),"Mario 20");
     m_window.setFramerateLimit(60);
     changeScene("MENU",std::make_shared<Scene_Menu>(this));
 }

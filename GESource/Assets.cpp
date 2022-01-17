@@ -57,7 +57,7 @@ void Assets::LoadFromFile(const std::string &path)
             file >> name >> texture >> frames >> speed;
             addAnimation(name,texture,frames,speed);
         }
-        else if (str == "font")
+        else if (str == "Font")
         {
             std::string name,path;
             file >> name >> path;

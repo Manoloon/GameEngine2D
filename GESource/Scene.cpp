@@ -49,5 +49,14 @@ void Scene::doAction(const Action & action)
 
 void Scene::sRender()
 {
-
+    m_game->window().clear();
+    // all of this are only for the player.
+    // set the position of the shape based on the entity transform->pos.
+    for(auto e : m_entityManager.getEntities())
+    {
+        e->getComponent<CAnimation>();
+        e->cTransform->angle +=1.0f;
+        m_game->window().draw();
+    }
+    m_game->window().display();
 }

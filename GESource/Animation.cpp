@@ -24,6 +24,11 @@ void Animation::update()
 {
     m_currentFrame++;
     //TODO: calc the correct frame of animation to play based on currentframe and speed
+    size_t frame = (m_currentFrame / m_speed) % m_frameCount;
+    const auto FW = m_size.x/m_frameCount;
+    const auto FH = m_size.y/m_frameCount;
+    const auto rectangle = sf::IntRect (frame * FW, 0, FW,FH);
+    m_sprite.setTextureRect(rectangle);
     //set the current texture rectangle properly -> see constructor.
 }
 

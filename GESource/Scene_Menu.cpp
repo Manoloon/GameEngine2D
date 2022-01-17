@@ -24,12 +24,12 @@ void Scene_Menu::init()
 
     m_title = "MArioyy";
     m_menuString.push_back("Level 1");
-    m_menuString.push_back("Level 2");
-    m_menuString.push_back("Level 3");
+    //m_menuString.push_back("Level 2");
+    //m_menuString.push_back("Level 3");
 
     m_levelPaths.push_back("Level1.txt");
-    m_levelPaths.push_back("Level2.txt");
-    m_levelPaths.push_back("Level3.txt");
+    //m_levelPaths.push_back("Level2.txt");
+    //m_levelPaths.push_back("Level3.txt");
 
     m_menuText.setFont(m_game->getAssets().getFont("Megaman"));
     m_menuText.setCharacterSize(64);

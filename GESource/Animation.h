@@ -9,10 +9,10 @@
 class Animation
 {
     sf::Sprite m_sprite;
-    size_t m_frameCount =1;
-    size_t m_currentFrame =0;
-    size_t m_speed = 0;
-    Vec2 m_size={1,1};
+    size_t m_frameCount =1; // total number of frames of animation
+    size_t m_currentFrame =0; // current frame of the animation being played.
+    size_t m_speed = 0; // the speed to play this anim
+    Vec2 m_size={1,1}; // size of the animation frame.
     std::string  m_name = "none";
 
 public:

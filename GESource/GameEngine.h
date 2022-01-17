@@ -11,9 +11,12 @@
 
 using SceneMap = std::map<std::string, std::shared_ptr<Scene>>;
 
+//struct GEGameConfig   {int W,H,FL,FS;};
+
 class GameEngine
 {
 private:
+    //GEGameConfig        m_gameConfig;
     SceneMap            m_sceneMap;
     sf::RenderWindow    m_window;
     Assets              m_assets;
