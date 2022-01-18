@@ -13,6 +13,7 @@ public:
     Scene_Menu() = default;
     explicit Scene_Menu (GameEngine * gameEngine);
     void sDoAction(const Action& action) override;
+    void sRender() override;
     void update() override;
 private:
     std::string                 m_title;

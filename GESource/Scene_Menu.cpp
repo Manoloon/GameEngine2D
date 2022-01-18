@@ -68,3 +68,14 @@ void Scene_Menu::onEnd()
 {
     m_game->quit();
 }
+
+void Scene_Menu::sRender()
+{
+    m_game->window().clear(sf::Color(100,100,255));
+    for(auto menu : m_menuString)
+    {
+        m_menuText.setString(menu);
+        m_menuText.setPosition(103,getHeight()-100 + 2);
+        m_game->window().draw(m_menuText);
+    }
+}

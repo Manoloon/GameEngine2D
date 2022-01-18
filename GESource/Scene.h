@@ -29,7 +29,7 @@ protected:
 public:
     void doAction(const Action & action);
     virtual void update()=0;
-    void sRender();
+    virtual void sRender()=0;
     virtual void sDoAction(const Action & action)=0;
     void simulate(int);
     void registerAction(int inputKey ,std::string actionName);

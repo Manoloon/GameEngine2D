@@ -32,7 +32,7 @@ class Entity
     const std::string m_tag = "default";
     bool m_alive =true;
     ComponentTuple m_components;
-    Entity(const size_t &m_id, const std::string &m_tags): m_id(m_id), m_tag(m_tags){};
+    Entity(const size_t &m_id, const std::string &m_tags);
 public:
     // crear componentes...
     ptr<CShape>     cShape;
@@ -58,6 +58,7 @@ public:
     {
         auto & component = getComponent<T>();
         component = T(std::forward<TArgs>(mArgs)...);
+        component.has = true;
         return component;
     }
 
@@ -67,21 +68,19 @@ public:
         return std::get<T>(m_components);
     }
     template<typename T>
-    T & getComponent() const
+    const T & getComponent() const
     {
         return std::get<T>(m_components);
     }
 
     // TODO : implementar el removeComponent template
-    /*
     template<typename T>
-    void RemoveComponent(T)
+    T & RemoveComponent(T)
     {
-       if(std::get<T>(m_components))
-       {
-
-       }
-    }*/
+        auto & component = getComponent<T>();
+        component.has = false;
+        return component;
+    }
 
 };
 

@@ -21,7 +21,7 @@ private:
     bool m_drawTextures =true;
     bool m_drawCollision = false;
     bool m_drawGrid = false;
-    const Vec2 m_gridSize = {64,64};
+    const Vec2 m_gridSize = {32,32};
     sf::Text m_gridText;
 public:
     Scene_Play();
@@ -31,6 +31,7 @@ public:
     void init(const std::string & levelPath);
     void update() override;
 // Systems()
+    void sRender() override;
     void sAnimation();
     void sMovement();
     void sLifespan();

@@ -10,6 +10,7 @@
 struct Component
         {
             Component()=default;
+            bool has =false;
         };
 
 struct CState : public Component

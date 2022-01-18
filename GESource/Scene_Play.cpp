@@ -205,4 +205,74 @@ void Scene_Play::drawLine(const Vec2 & p1, const Vec2 & p2)
     m_game->window().draw(line,2,sf::Lines);
 }
 
+void Scene_Play::sRender()
+{
+    if(!m_paused){m_game->window().clear(sf::Color(100,100,255)); }
+    else{m_game->window().clear(sf::Color(50,50,150));}
+
+    auto & playerPos = m_player->getComponent<CTransform>().pos;
+    float windowCenterX = std::max(m_game->window().getSize().x/2.0f,playerPos.x);
+    sf::View view = m_game->window().getView();
+    view.setCenter(windowCenterX,m_game->window().getSize().y - view.getCenter().y);
+    m_game->window().setView(view);
+
+    // draw all entity textures / animations
+    if(m_drawTextures)
+    {
+        for(auto e : m_entityManager.getEntities())
+        {
+            auto & transform = e->getComponent<CTransform>();
+            if(e->hasComponent<CAnimation>())
+            {
+                auto & anim = e->getComponent<CAnimation>().animation;
+                anim.getSprite().setRotation(transform.angle);
+                anim.getSprite().setPosition(transform.pos.x,transform.pos.y);
+                anim.getSprite().setScale(transform.scale.x,transform.scale.y);
+                m_game->window().draw(anim.getSprite());
+            }
+        }
+    }
+    if(m_drawCollision)
+    {
+        for (auto e:m_entityManager.getEntities())
+        {
+            if(e->hasComponent<CBBCollision>())
+            {
+                auto & box = e->getComponent<CBBCollision>();
+                auto & transform = e->getComponent<CTransform>();
+                sf::RectangleShape rect;
+                rect.setSize(sf::Vector2f(box.size.x-1,box.size.y-1));
+                rect.setOrigin(sf::Vector2f(box.halfSize.x,box.halfSize.y));
+                rect.setPosition(transform.pos.x,transform.pos.y);
+                rect.setFillColor(sf::Color(0,0,0,0));
+                rect.setOutlineColor(sf::Color(255,255,255,255));
+                rect.setOutlineThickness(1);
+                m_game->window().draw(rect);
+            }
+        }
+    }
+    if(m_drawGrid)
+    {
+        float leftX = m_game->window().getView().getCenter().x - getWidth() /2;
+        float rightX = leftX + getWidth() + m_gridSize.x;
+        float nextGridX = leftX - ((int)leftX % (int)m_gridSize.x);
+        for(float x = nextGridX;x<rightX; x += m_gridSize.x)
+        {
+            drawLine(Vec2(x,0),Vec2(x,getHeight()));
+        }
+        for(float y=0;y<getHeight();y +=m_gridSize.y)
+        {
+            drawLine(Vec2(leftX,getHeight()-y),Vec2(rightX,getHeight()-y));
+            for(float x = nextGridX;x<rightX;x += m_gridSize.x)
+            {
+                std::string xCell = std::to_string((int)x / (int)m_gridSize.x);
+                std::string yCell =std::to_string((int)y / (int)m_gridSize.y);
+                m_gridText.setString("(" + xCell + ","+yCell +")");
+                m_gridText.setPosition(x+3,getHeight()-y - m_gridSize.y +2);
+                m_game->window().draw(m_gridText);
+            }
+        }
+    }
+}
+
 
