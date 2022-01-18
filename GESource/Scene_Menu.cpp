@@ -22,7 +22,7 @@ void Scene_Menu::init()
     registerAction(sf::Keyboard::D,         "PLAY");
     registerAction(sf::Keyboard::Escape,    "QUIT");
 
-    m_title = "MArioyy";
+    m_title = "MENU";
     m_menuString.push_back("Level 1");
     //m_menuString.push_back("Level 2");
     //m_menuString.push_back("Level 3");
@@ -38,6 +38,7 @@ void Scene_Menu::init()
 void Scene_Menu::update()
 {
     m_entityManager.Update();
+    sRender();
 }
 
 void Scene_Menu::sDoAction(const Action& action)
@@ -71,6 +72,7 @@ void Scene_Menu::onEnd()
 
 void Scene_Menu::sRender()
 {
+    // TODO : aca esta la bocha.
     m_game->window().clear(sf::Color(100,100,255));
     for(auto menu : m_menuString)
     {

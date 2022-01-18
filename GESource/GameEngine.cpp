@@ -27,7 +27,11 @@ std::shared_ptr<Scene> GameEngine::currentScene()
 
 void GameEngine::update()
 {
-
+    if(currentScene())
+    {
+        currentScene()->update();
+    }
+  window().display();
 }
 
 void GameEngine::sUserInput()
@@ -69,13 +73,12 @@ void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene
     if(scene)
     {
         m_sceneMap[sceneName] = scene;
+        m_currentScene = sceneName;
     }
-    else
+    if(m_sceneMap.find(sceneName)==m_sceneMap.end())
     {
-        if(m_sceneMap.find(sceneName)==m_sceneMap.end())
-        {
-            //TODO : ni idea !
-        }
+        //TODO : ni idea !
+        m_currentScene="";
     }
 }
 

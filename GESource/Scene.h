@@ -40,8 +40,6 @@ public:
     size_t getCurrentFrame()const;
     std::map<int,std::string> getActionMap() const;
 
-   // virtual ~Scene();
-
 };
 
 

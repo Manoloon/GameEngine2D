@@ -24,7 +24,7 @@ private:
     const Vec2 m_gridSize = {32,32};
     sf::Text m_gridText;
 public:
-    Scene_Play();
+    Scene_Play() = default;
     void spawnPlayer();
     explicit Scene_Play(GameEngine * gameEngine, const std::string & levelPath);
     void spawnBullet(std::shared_ptr<Entity>entity);
