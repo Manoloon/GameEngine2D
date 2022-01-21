@@ -27,6 +27,7 @@ std::shared_ptr<Scene> GameEngine::currentScene()
 
 void GameEngine::update()
 {
+    sUserInput();
     if(currentScene())
     {
         currentScene()->update();
@@ -77,7 +78,6 @@ void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene
     }
     if(m_sceneMap.find(sceneName)==m_sceneMap.end())
     {
-        //TODO : ni idea !
         m_currentScene="";
     }
 }

@@ -44,5 +44,6 @@ std::map<int, std::string> Scene::getActionMap() const
 
 void Scene::doAction(const Action & action)
 {
-
+    //TODO : esta funcion la llama el engine class para registrar las actions.
+   // sDoAction(action);
 }

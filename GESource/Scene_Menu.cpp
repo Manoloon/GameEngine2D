@@ -24,12 +24,12 @@ void Scene_Menu::init()
 
     m_title = "MENU";
     m_menuString.push_back("Level 1");
-    //m_menuString.push_back("Level 2");
-    //m_menuString.push_back("Level 3");
+    m_menuString.push_back("Level 2");
+    m_menuString.push_back("Level 3");
 
     m_levelPaths.push_back("Level1.txt");
-    //m_levelPaths.push_back("Level2.txt");
-    //m_levelPaths.push_back("Level3.txt");
+    m_levelPaths.push_back("Level2.txt");
+    m_levelPaths.push_back("Level3.txt");
 
     m_menuText.setFont(m_game->getAssets().getFont("Megaman"));
     m_menuText.setCharacterSize(64);
@@ -39,6 +39,7 @@ void Scene_Menu::update()
 {
     m_entityManager.Update();
     sRender();
+
 }
 
 void Scene_Menu::sDoAction(const Action& action)
@@ -74,10 +75,12 @@ void Scene_Menu::sRender()
 {
     // TODO : aca esta la bocha.
     m_game->window().clear(sf::Color(100,100,255));
+    auto startHeight = 104;
     for(auto menu : m_menuString)
     {
         m_menuText.setString(menu);
-        m_menuText.setPosition(103,getHeight()-100 + 2);
+        m_menuText.setPosition(103,getHeight() - startHeight);
+        startHeight +=120;
         m_game->window().draw(m_menuText);
     }
 }
