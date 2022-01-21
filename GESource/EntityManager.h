@@ -29,5 +29,4 @@ public:
     const EntityVec& getEntities(const std::string& tag);
 };
 
-
 #endif //GAMEENGINE2D_ENTITYMANAGER_H

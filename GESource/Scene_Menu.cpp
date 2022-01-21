@@ -39,7 +39,6 @@ void Scene_Menu::update()
 {
     m_entityManager.Update();
     sRender();
-
 }
 
 void Scene_Menu::sDoAction(const Action& action)
@@ -57,7 +56,8 @@ void Scene_Menu::sDoAction(const Action& action)
         }
         else if(action.getName() == "PLAY")
         {
-            m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex]));
+            m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game,
+                                                                     m_levelPaths[m_selectedMenuIndex]));
         }
         else if (action.getName() == "QUIT")
         {
@@ -73,7 +73,6 @@ void Scene_Menu::onEnd()
 
 void Scene_Menu::sRender()
 {
-    // TODO : aca esta la bocha.
     m_game->window().clear(sf::Color(100,100,255));
     auto startHeight = 104;
     for(auto menu : m_menuString)
