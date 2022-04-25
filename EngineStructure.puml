@@ -29,7 +29,7 @@ Scene <|-- Scene_Play
 
 class CBBCollision
 {
-m_size      :   Vec2
+size      :   Vec2
 }
 class CCollision
 {
@@ -115,13 +115,14 @@ removeCompont<C>():   void
 
 class GameEngine
 {
-m_scenes : map<string,Scene>
+sceneMap : map<string,Scene>
 m_window : sf::RenderWindow
+m_simulationSpeed : size_t
 m_assets : Assets
 m_currentScene : string
 m_running : bool
-init() : void
-currentScene() Scene*
+init(const std::string & path) : void
+currentScene() : std::shared_ptr<Scene>
 run() : void
 update(): void
 quit() : void
@@ -129,11 +130,12 @@ changeScene(scene) : void
 getAssets() : Assets &
 window() : Window &
 sUserInput() : void
+isRunning() : bool
 }
 abstract Scene
 {
 m_game : GameEngine *
-m_entities : EntityManager
+m_entityManager : EntityManager
 m_currentFrame : int
 m_actionMap : map<int,string>
 m_paused : bool
@@ -144,6 +146,8 @@ sRender() : void=0
 simulate(int) : void
 doAction(action) : void
 registerAction(action) : void
+getWidth() : size_t
+setPaused(bool paused) : void
 }
 
 class Scene_Play
