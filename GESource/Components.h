@@ -45,7 +45,6 @@ struct CCollision
 struct CScore
 {
     int score = 0;
-
     explicit CScore(int s) : score(s){}
 };
 
@@ -54,7 +53,7 @@ struct CLifespan
     int remaining = 0;
     int total = 0;
 
-    CLifespan(int total)
+    explicit CLifespan(int total)
             : remaining(total), total(total)
     {}
 };

@@ -20,14 +20,14 @@ class Assets
     void addSound(const std::string & soundName, const std::string & path);
 
 public:
-    Assets();
+    Assets()=default;
 
-    void LoadFromFile(const std::string & path);
+    void LoadFromFile(const std::string & NewPath);
 
-    const sf::Texture & getTexture(const std::string & textureName) const;
-    const Animation & getAnimation(const std::string & animName) const;
-    const sf::Font & getFont(const std::string & fontName) const;
-    const sf::Sound & getSound(const std::string & soundName) const;
+    const sf::Texture & getTexture(const std::string & textureName);
+    const Animation & getAnimation(const std::string & animName);
+    const sf::Font & getFont(const std::string & fontName);
+    const sf::Sound & getSound(const std::string & soundName);
 };
 
 

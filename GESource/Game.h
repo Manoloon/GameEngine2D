@@ -64,7 +64,7 @@ class Game
     void sRender();
     void sEnemySpawner();
     void sCollision();
-    void sUpdateScore(const int newScore);
+    void sUpdateScore(int newScore);
 
     void spawnPlayer();
     void spawnEnemy();

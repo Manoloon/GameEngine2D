@@ -4,29 +4,9 @@
 
 #include "Assets.h"
 
-Assets::Assets()
+void Assets::LoadFromFile(const std::string &NewPath)
 {
-
-}
-
-void Assets::addTexture(const std::string &textureName, const std::string &path, bool smooth)
-{
-
-}
-
-void Assets::addAnimation(const std::string &animName, const std::string &textureName, size_t frameCount, size_t speed)
-{
-
-}
-
-void Assets::addFont(const std::string &fontName, const std::string &path)
-{
-
-}
-
-void Assets::LoadFromFile(const std::string &path)
-{
-  std::ifstream file(path);
+  std::ifstream file(NewPath);
   std::string str;
     while (file.good())
     {
@@ -57,18 +37,45 @@ void Assets::LoadFromFile(const std::string &path)
     }
 }
 
-const sf::Texture &Assets::getTexture(const std::string &textureName) const
+const sf::Texture &Assets::getTexture(const std::string &textureName)
 {
     return m_textureMap[textureName];
 }
 
-const Animation &Assets::getAnimation(const std::string &animName) const
+const Animation &Assets::getAnimation(const std::string &animName)
 {
     return m_animationMap[animName];
 }
 
-const sf::Font &Assets::getFont(const std::string &fontName) const
+const sf::Font &Assets::getFont(const std::string &fontName)
 {
-    return <#initializer#>;
+    return m_fontMap[fontName];
 }
+
+const sf::Sound &Assets::getSound(const std::string &soundName)
+{
+    return m_soundMap[soundName];
+}
+
+void Assets::addTexture(const std::string &textureName, const std::string &path, bool smooth)
+{
+        m_textureMap[textureName].loadFromFile(path);
+        m_textureMap[textureName].setSmooth(smooth);
+}
+
+void Assets::addAnimation(const std::string &animName, const std::string &textureName, size_t frameCount, size_t speed)
+{
+
+}
+
+void Assets::addFont(const std::string &fontName, const std::string &path)
+{
+    m_fontMap[fontName].loadFromFile(path);
+}
+
+void Assets::addSound(const std::string &soundName, const std::string &path)
+{
+    //TODO : add sound to the map.
+}
+
 
