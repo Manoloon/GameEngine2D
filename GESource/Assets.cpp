@@ -1,13 +1,7 @@
 //
 // Created by Manoloon on 09/01/2022.
 //
-
 #include "Assets.h"
-
-Assets::Assets()
-{
-
-}
 
 void Assets::addTexture(const std::string &textureName, const std::string &path, bool smooth)
 {
@@ -37,9 +31,14 @@ void Assets::addFont(const std::string &fontName, const std::string &path)
     }
 }
 
-void Assets::LoadFromFile(const std::string &path)
+void Assets::addSound(const std::string &soundName, const std::string &path)
 {
-  std::ifstream file(path);
+    //TODO : add sound to map.
+}
+
+void Assets::LoadFromFile(const std::string &NewPath)
+{
+  std::ifstream file(NewPath);
   std::string str;
     while (file.good())
     {
@@ -87,4 +86,11 @@ const sf::Font &Assets::getFont(const std::string &fontName) const
     assert(m_fontMap.find(fontName) != m_fontMap.end());
     return m_fontMap.at(fontName);
 }
+
+const sf::Sound &Assets::getSound(const std::string &soundName) const
+{
+    assert(m_soundMap.find(fontName) != m_soundMap.end());
+    return m_soundMap.at(soundName);
+}
+
 
