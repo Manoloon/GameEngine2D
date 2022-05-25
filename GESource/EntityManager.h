@@ -14,15 +14,15 @@ using EntityMap = std::map<std::string,EntityVec>;
 class EntityManager
 {
     // generate id
-    size_t m_totalEntities;
-    EntityVec m_entities;
-    EntityMap m_entitiesMap;
-    EntityVec m_toAdd;
+    size_t m_totalEntities=0;
+    EntityVec m_entities={};
+    EntityMap m_entitiesMap={};
+    EntityVec m_toAdd={};
 
     void removeDeadEntities(EntityVec & vec);
 
 public:
-    EntityManager();
+    EntityManager()=default;
     void Update();
     ptr<Entity> addEntity(const std::string& tag);
     const EntityVec& getEntities();

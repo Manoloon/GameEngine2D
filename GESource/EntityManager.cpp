@@ -4,8 +4,6 @@
 
 #include "EntityManager.h"
 
-EntityManager::EntityManager(){}
-
 void EntityManager::Update()
 {
     for(const auto& e:m_toAdd)

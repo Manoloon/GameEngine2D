@@ -3,7 +3,7 @@
 
 int main()
 {
-    //Game g("Config.txt");
-    GameEngine g("Assets.txt");
+    Game g("Config.txt");
+    //GameEngine g("Assets.txt");
     g.run();
 }
